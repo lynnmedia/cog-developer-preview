@@ -1,0 +1,28 @@
+define entity "raw-record" {
+  kind: observation
+  level: L1
+  value: "  Present  "
+}
+
+define entity "normalized-record" {
+  kind: observation
+  level: L1
+  value: "present"
+  transformed-from: "raw-record"
+}
+
+transform {
+  target: "raw-record"
+  to: normalize-value
+  operation: "transform"
+}
+
+relate "raw-record" -> "normalized-record" {
+  kind: transforms-to
+  operation: "transform"
+}
+
+emit {
+  target: "normalized-record"
+  kind: transformation
+}

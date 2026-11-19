@@ -1,0 +1,70 @@
+define entity "document-draft" {
+  kind: "observation"
+  level: L1
+  value: "draft-content"
+}
+
+define entity "document-golden" {
+  kind: "expectation"
+  level: L1
+  value: "golden-content"
+}
+
+define entity "drift-report" {
+  kind: "drift"
+  level: L2
+  value: "detected-drift-details"
+}
+
+define entity "reconciliation-action" {
+  kind: "action"
+  level: L2
+  value: "align-draft-to-golden"
+}
+
+define entity "explanation-summary" {
+  kind: "explanation"
+  level: L3
+  value: "drift-mitigation-reasoning"
+}
+
+// 1. Observe
+constrain {
+  target: "document-draft"
+  operation: "observe"
+}
+
+// 2. Compare
+relate "document-draft" -> "document-golden" {
+  kind: "differs-from"
+  operation: "compare"
+}
+
+// 3. Detect Drift
+relate "document-draft" -> "drift-report" {
+  kind: "has-drift"
+  operation: "detect-drift"
+}
+
+// 4. Resolve
+resolve "drift-report" to L2 {
+  operation: "resolve"
+  reason: "drift-detected"
+}
+
+relate "drift-report" -> "reconciliation-action" {
+  kind: "mitigated-by"
+  operation: "resolve"
+}
+
+// 5. Explain
+relate "reconciliation-action" -> "explanation-summary" {
+  kind: "explained-by"
+  operation: "explain"
+}
+
+// Emit report
+emit {
+  target: "explanation-summary"
+  kind: "document-review"
+}

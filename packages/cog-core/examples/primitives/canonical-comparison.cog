@@ -1,0 +1,24 @@
+define entity "baseline-signal" {
+  kind: observation
+  level: L1
+  value: "present"
+}
+
+define entity "current-signal" {
+  kind: observation
+  level: L1
+  value: "absent"
+}
+
+relate "current-signal" -> "baseline-signal" {
+  kind: differs-from
+  operation: compare
+  field: "value"
+  before: "present"
+  after: "absent"
+}
+
+emit {
+  target: "current-signal"
+  kind: comparison
+}

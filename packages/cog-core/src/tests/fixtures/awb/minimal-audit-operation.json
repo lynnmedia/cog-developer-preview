@@ -1,0 +1,6 @@
+{
+  "operation_id": "awb-operation-001",
+  "operation_kind": "audit_operation",
+  "subject_ref": "subject-001",
+  "status": "approved"
+}

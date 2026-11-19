@@ -1,0 +1,25 @@
+define entity "adapter-signal" {
+  kind: record
+  level: L3
+  value: "review"
+}
+
+define entity "adapter-action" {
+  kind: action
+  level: L2
+  value: "inspect"
+}
+
+view "adapter-signal" as operator {
+  operation: project
+}
+
+relate "adapter-signal" -> "adapter-action" {
+  kind: recommends
+  operation: "relate"
+}
+
+emit {
+  target: "adapter-signal"
+  kind: adapter-reference
+}

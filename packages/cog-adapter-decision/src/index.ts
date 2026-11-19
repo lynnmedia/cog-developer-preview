@@ -1,0 +1,1 @@
+export { decisionAdapter } from "./decisionAdapter";

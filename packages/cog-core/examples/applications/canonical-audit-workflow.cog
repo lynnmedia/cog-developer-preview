@@ -1,0 +1,63 @@
+define entity "repository-root" {
+  kind: "observation"
+  level: L1
+  value: "git-repository"
+}
+
+define entity "finding-unauthorized-api" {
+  kind: "finding"
+  level: L1
+  value: "unauthorized-api-call-detected"
+}
+
+define entity "dependency-declaration" {
+  kind: "finding"
+  level: L1
+  value: "package-json-dependencies"
+}
+
+define entity "severity-evaluation" {
+  kind: "evaluation"
+  level: L2
+  value: "severity-high"
+}
+
+// 1. Observe Repository
+constrain {
+  target: "repository-root"
+  operation: "observe"
+}
+
+// 2. Identify Findings
+relate "repository-root" -> "finding-unauthorized-api" {
+  kind: "contains-finding"
+  operation: "identify"
+}
+
+relate "repository-root" -> "dependency-declaration" {
+  kind: "contains-finding"
+  operation: "identify"
+}
+
+// 3. Relate Findings
+relate "finding-unauthorized-api" -> "dependency-declaration" {
+  kind: "blocks"
+  operation: "relate"
+}
+
+// 4. Resolve Severity
+resolve "finding-unauthorized-api" to L2 {
+  operation: "resolve"
+  reason: "policy-violation"
+}
+
+relate "finding-unauthorized-api" -> "severity-evaluation" {
+  kind: "severity-resolved-to"
+  operation: "resolve"
+}
+
+// 5. Emit Report
+emit {
+  target: "severity-evaluation"
+  kind: "audit-report"
+}

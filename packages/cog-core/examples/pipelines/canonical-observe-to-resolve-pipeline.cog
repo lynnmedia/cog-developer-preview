@@ -1,0 +1,36 @@
+define entity "observed-state" {
+  kind: observation
+  level: L1
+  operation: observe
+  value: "absent"
+}
+
+define entity "expected-state" {
+  kind: expectation
+  level: L1
+  value: "present"
+}
+
+relate "observed-state" -> "expected-state" {
+  kind: differs-from
+  operation: compare
+  field: "value"
+  before: "present"
+  after: "absent"
+}
+
+constrain {
+  target: "observed-state"
+  operation: evaluate
+  rule: "difference-requires-resolution"
+}
+
+resolve "observed-state" to L2 {
+  operation: "resolve"
+  reason: "difference-evaluated"
+}
+
+emit {
+  target: "observed-state"
+  kind: observe-to-resolve
+}

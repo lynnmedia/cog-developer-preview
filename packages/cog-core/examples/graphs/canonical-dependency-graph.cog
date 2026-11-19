@@ -1,0 +1,35 @@
+define entity "source-record" {
+  kind: observation
+  level: L1
+}
+
+define entity "target-record" {
+  kind: decision
+  level: L2
+}
+
+relate "source-record" -> "target-record" {
+  kind: informs
+  operation: "relate"
+}
+
+resolve "target-record" to L3 {
+  operation: "resolve"
+}
+
+constrain {
+  target: "target-record"
+  operation: evaluate
+  rule: "source-required"
+}
+
+transform {
+  target: "target-record"
+  to: normalize-decision
+  operation: "transform"
+}
+
+emit {
+  target: "target-record"
+  kind: dependency-graph
+}

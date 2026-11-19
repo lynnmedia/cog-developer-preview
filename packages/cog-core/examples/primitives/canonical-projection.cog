@@ -1,0 +1,18 @@
+define entity "signal-record" {
+  kind: observation
+  level: L1
+  source: "scanner-1"
+  value: "present"
+  raw: "scanner-1 present at t0"
+}
+
+view "signal-record" as reduced {
+  operation: project
+  include: ["source", "value"]
+  exclude: ["raw"]
+}
+
+emit {
+  target: "signal-record"
+  kind: projection
+}

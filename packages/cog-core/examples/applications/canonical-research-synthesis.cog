@@ -1,0 +1,92 @@
+define entity "source-a" {
+  kind: "observation"
+  level: L1
+  value: "source-a-data"
+}
+
+define entity "source-b" {
+  kind: "observation"
+  level: L1
+  value: "source-b-data"
+}
+
+define entity "claim-a" {
+  kind: "extraction"
+  level: L2
+  value: "claim-a-content"
+}
+
+define entity "claim-b" {
+  kind: "extraction"
+  level: L2
+  value: "claim-b-content"
+}
+
+define entity "synthesis-cluster" {
+  kind: "cluster"
+  level: L3
+  value: "clustered-claims"
+}
+
+define entity "final-resolution" {
+  kind: "resolution"
+  level: L4
+  value: "synthesized-conclusion"
+}
+
+// Observe Sources
+constrain {
+  target: "source-a"
+  operation: "observe"
+}
+
+constrain {
+  target: "source-b"
+  operation: "observe"
+}
+
+// Extract Claims
+relate "source-a" -> "claim-a" {
+  kind: "extracts"
+  operation: "extract"
+}
+
+// Extract Claims
+relate "source-b" -> "claim-b" {
+  kind: "extracts"
+  operation: "extract"
+}
+
+// Compare Claims
+relate "claim-a" -> "claim-b" {
+  kind: "differs-from"
+  operation: "compare"
+}
+
+// Cluster Claims
+relate "claim-a" -> "synthesis-cluster" {
+  kind: "clustered-into"
+  operation: "group"
+}
+
+relate "claim-b" -> "synthesis-cluster" {
+  kind: "clustered-into"
+  operation: "group"
+}
+
+// Resolve
+resolve "synthesis-cluster" to L4 {
+  operation: "resolve"
+  reason: "synthesis-complete"
+}
+
+relate "synthesis-cluster" -> "final-resolution" {
+  kind: "resolves-to"
+  operation: "resolve"
+}
+
+// Emit
+emit {
+  target: "final-resolution"
+  kind: "research-synthesis"
+}

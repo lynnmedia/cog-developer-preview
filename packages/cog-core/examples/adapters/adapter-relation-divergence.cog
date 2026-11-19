@@ -1,0 +1,18 @@
+define entity "source-entity" {
+  kind: item
+  level: L3
+}
+
+define entity "target-entity" {
+  kind: item
+  level: L2
+}
+
+relate "source-entity" -> "target-entity" {
+  kind: dependency
+}
+
+emit {
+  target: "source-entity"
+  kind: brief
+}

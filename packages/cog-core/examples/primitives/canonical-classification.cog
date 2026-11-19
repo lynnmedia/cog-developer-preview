@@ -1,0 +1,26 @@
+define entity "raw-signal" {
+  kind: observation
+  level: L1
+  source: "scanner-1"
+  value: "over-threshold"
+}
+
+define entity "classified-signal" {
+  kind: incident
+  level: L2
+  operation: classify
+  source: "scanner-1"
+  value: "over-threshold"
+  preserved-source: "raw-signal"
+}
+
+relate "raw-signal" -> "classified-signal" {
+  kind: classified-as
+  operation: classify
+}
+
+emit {
+  target: "classified-signal"
+  kind: classification
+  preserved-source: "raw-signal"
+}

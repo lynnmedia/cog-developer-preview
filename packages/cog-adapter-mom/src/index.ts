@@ -1,0 +1,1 @@
+export { momAdapter } from "./momAdapter";

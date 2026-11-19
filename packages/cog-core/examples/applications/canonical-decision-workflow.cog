@@ -1,0 +1,54 @@
+define entity "raw-metric" {
+  kind: "observation"
+  level: L1
+  value: 85
+}
+
+define entity "selected-option" {
+  kind: "alternative"
+  level: L1
+  value: "option-alpha"
+}
+
+define entity "final-decision" {
+  kind: "decision"
+  level: L2
+  value: "option-alpha-approved"
+}
+
+// 1. Observe raw metrics and alternative options
+constrain {
+  target: "raw-metric"
+  operation: "observe"
+}
+
+// 2. Evaluate raw metrics against standard
+relate "raw-metric" -> "selected-option" {
+  kind: "supports"
+  operation: "evaluate"
+}
+
+// 3. Constrain the choice based on criteria
+constrain {
+  target: "selected-option"
+  operation: "evaluate"
+  rule: "metric-threshold-met"
+  threshold: 80
+}
+
+// 4. Resolve the choice to approval level
+resolve "selected-option" to L2 {
+  operation: "resolve"
+  reason: "metrics-exceeded-threshold"
+}
+
+relate "selected-option" -> "final-decision" {
+  kind: "approved-as"
+  operation: "resolve"
+}
+
+// 5. Emit
+emit {
+  target: "final-decision"
+  kind: "decision-analysis"
+}

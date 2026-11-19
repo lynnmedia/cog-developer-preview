@@ -1,0 +1,18 @@
+define entity "measured-signal" {
+  kind: observation
+  level: L1
+  operation: observe
+  confidence: 0.91
+}
+
+constrain {
+  target: "measured-signal"
+  operation: evaluate
+  rule: "confidence-at-least"
+  threshold: 0.8
+}
+
+resolve "measured-signal" to L2 {
+  operation: "resolve"
+  reason: "constraint-satisfied"
+}

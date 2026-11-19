@@ -1,0 +1,46 @@
+{
+  "name": "cog",
+  "version": "0.1.6",
+  "private": true,
+  "type": "commonjs",
+  "workspaces": [
+    "packages/cog-core",
+    "packages/cog-adapter-mom",
+    "packages/cog-adapter-decision",
+    "packages/cog-vscode-extension"
+  ],
+  "engines": {
+    "node": "20.x",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:v0.3": "npm run build -w @cog/core && npm run build -w @cog/adapter-mom && npm run build -w @cog/adapter-decision && npm run build -w cog-vscode-extension",
+    "validate:release": "tsx scripts/validate-release.ts",
+    "test": "tsx --test src/core.test.ts",
+    "test:v0.3": "npm run test -w @cog/core",
+    "clean": "rm -rf dist *.tgz cog-local.tgz",
+    "verify:dist": "test -f dist/index.js || (echo 'Missing build output' && exit 1)",
+    "prepack": "npm run clean && npm run build && npm run verify:dist && npm test",
+    "pack:local": "npm pack && mv cog-*.tgz cog-local.tgz",
+    "release:local": "npm version patch && npm run pack:local"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.25",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.2"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
+}

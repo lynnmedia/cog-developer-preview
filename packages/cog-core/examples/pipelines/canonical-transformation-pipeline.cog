@@ -1,0 +1,36 @@
+define entity "raw-observation" {
+  kind: observation
+  level: L1
+  operation: observe
+  value: "  Present  "
+}
+
+define entity "normalized-observation" {
+  kind: observation
+  level: L1
+  value: "present"
+}
+
+transform {
+  target: "raw-observation"
+  to: normalize-value
+  operation: "transform"
+}
+
+relate "raw-observation" -> "normalized-observation" {
+  kind: transforms-to
+  operation: "transform"
+}
+
+relate "normalized-observation" -> "raw-observation" {
+  kind: differs-from
+  operation: compare
+  field: "value"
+  before: "  Present  "
+  after: "present"
+}
+
+emit {
+  target: "normalized-observation"
+  kind: transformation-comparison
+}

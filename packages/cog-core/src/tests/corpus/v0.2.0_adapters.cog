@@ -1,0 +1,13 @@
+define entity "user" {
+  kind: record
+}
+define entity "preferences" {
+  kind: record
+}
+relate "user" -> "preferences" {
+  kind: "has_preferences"
+}
+emit {
+  target: "user"
+  kind: "registration_event"
+}

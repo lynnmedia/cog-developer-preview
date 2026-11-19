@@ -1,0 +1,14 @@
+define entity "signal" {
+  kind: record
+  level: L3
+}
+
+view "signal" as advisory {
+  audience: self
+  scope: "daily"
+}
+
+emit {
+  target: "signal"
+  kind: brief
+}

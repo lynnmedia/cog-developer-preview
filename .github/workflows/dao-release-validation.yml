@@ -1,0 +1,38 @@
+name: cog DAOH release validation
+
+on:
+  push:
+    branches:
+      - main
+      - dao-refresh-developer-preview
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Root regression tests
+        run: npm test
+
+      - name: Developer Preview release gate
+        run: npm run validate:release
+
+      - name: Diff hygiene
+        run: git diff --check

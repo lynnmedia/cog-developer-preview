@@ -1,0 +1,14 @@
+define entity "identity-candidate" {
+  kind: identity-signature
+  level: L1
+  operation: identify
+  source: "scanner-1"
+  value: "present"
+  signature: "kind:observation|source:scanner-1|value:present"
+  identity: "identity:scanner-1:present"
+}
+
+emit {
+  target: "identity-candidate"
+  kind: identity
+}

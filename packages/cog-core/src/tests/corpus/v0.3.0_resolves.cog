@@ -1,0 +1,6 @@
+define entity "ticket" {
+  kind: record
+}
+resolve "ticket" to L3 {
+  // resolve statement
+}

@@ -1,0 +1,21 @@
+define entity "sensor" {
+  kind: source
+  level: L1
+}
+
+define entity "reading" {
+  kind: observation
+  level: L1
+  value: "42"
+}
+
+relate "sensor" -> "reading" {
+  kind: produces
+  operation: "relate"
+  cardinality: one
+}
+
+emit {
+  target: "sensor"
+  kind: relation-graph
+}

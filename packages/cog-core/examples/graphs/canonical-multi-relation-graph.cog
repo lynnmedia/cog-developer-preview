@@ -1,0 +1,34 @@
+define entity "node-a" {
+  kind: observation
+  level: L1
+}
+
+define entity "node-b" {
+  kind: decision
+  level: L2
+}
+
+define entity "node-c" {
+  kind: constraint
+  level: L2
+}
+
+relate "node-a" -> "node-b" {
+  kind: supports
+  operation: "relate"
+}
+
+relate "node-b" -> "node-c" {
+  kind: blocks
+  operation: "relate"
+}
+
+relate "node-c" -> "node-b" {
+  kind: informs
+  operation: "relate"
+}
+
+emit {
+  target: "node-b"
+  kind: multi-relation-graph
+}

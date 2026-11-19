@@ -1,0 +1,12 @@
+define entity "emission-record" {
+  kind: record
+  level: L1
+  value: "ready"
+}
+
+emit {
+  target: "emission-record"
+  kind: digest
+  payload: "canonical-emission"
+  trace: "required"
+}

@@ -1,0 +1,20 @@
+define entity "perspective-record" {
+  kind: observation
+  level: L2
+  value: "requires-review"
+}
+
+view "perspective-record" as operator {
+  operation: project
+  audience: "operator"
+}
+
+view "perspective-record" as summary {
+  operation: project
+  audience: "review"
+}
+
+emit {
+  target: "perspective-record"
+  kind: perspective-graph
+}

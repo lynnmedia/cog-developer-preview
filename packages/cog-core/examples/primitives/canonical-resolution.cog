@@ -1,0 +1,15 @@
+define entity "candidate-decision" {
+  kind: decision
+  level: L2
+  status: "candidate"
+}
+
+resolve "candidate-decision" to L3 {
+  operation: "resolve"
+  reason: "sufficient-evidence"
+}
+
+emit {
+  target: "candidate-decision"
+  kind: resolution
+}

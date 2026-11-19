@@ -1,0 +1,17 @@
+define entity "candidate-record" {
+  kind: observation
+  level: L1
+  confidence: 0.9
+}
+
+constrain {
+  target: "candidate-record"
+  operation: "constrain"
+  rule: "confidence-at-least"
+  threshold: 0.8
+}
+
+emit {
+  target: "candidate-record"
+  kind: constraint-validation
+}

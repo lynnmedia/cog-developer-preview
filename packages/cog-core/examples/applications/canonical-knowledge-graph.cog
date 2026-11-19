@@ -1,0 +1,80 @@
+define entity "sensor-stream" {
+  kind: "observation"
+  level: L1
+  value: "network-log-data"
+}
+
+define entity "profile-host" {
+  kind: "profile"
+  level: L1
+  value: "host-10.0.0.1"
+}
+
+define entity "profile-user" {
+  kind: "profile"
+  level: L1
+  value: "user-admin"
+}
+
+define entity "network-cluster" {
+  kind: "cluster"
+  level: L2
+  value: "admin-activity-graph"
+}
+
+define entity "explanation-node" {
+  kind: "explanation"
+  level: L3
+  value: "correlated-admin-access-reasoning"
+}
+
+// 1. Observe
+constrain {
+  target: "sensor-stream"
+  operation: "observe"
+}
+
+// 2. Identify
+relate "sensor-stream" -> "profile-host" {
+  kind: "identifies"
+  operation: "identify"
+}
+
+relate "sensor-stream" -> "profile-user" {
+  kind: "identifies"
+  operation: "identify"
+}
+
+// 3. Relate
+relate "profile-user" -> "profile-host" {
+  kind: "accesses"
+  operation: "relate"
+}
+
+// 4. Cluster
+relate "profile-user" -> "network-cluster" {
+  kind: "clustered-into"
+  operation: "group"
+}
+
+relate "profile-host" -> "network-cluster" {
+  kind: "clustered-into"
+  operation: "group"
+}
+
+// 5. Explain / Resolve
+resolve "network-cluster" to L3 {
+  operation: "resolve"
+  reason: "clustering-complete"
+}
+
+relate "network-cluster" -> "explanation-node" {
+  kind: "explained-by"
+  operation: "explain"
+}
+
+// Emit report
+emit {
+  target: "explanation-node"
+  kind: "knowledge-graph"
+}

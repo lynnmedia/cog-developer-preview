@@ -1,0 +1,41 @@
+define entity "entity-a" {
+  kind: observation
+  level: L1
+}
+
+define entity "entity-b" {
+  kind: hypothesis
+  level: L2
+}
+
+define entity "entity-c" {
+  kind: decision
+  level: L3
+}
+
+relate "entity-a" -> "entity-b" {
+  kind: informs
+  operation: "relate"
+}
+
+relate "entity-b" -> "entity-c" {
+  kind: supports
+  operation: "relate"
+}
+
+resolve "entity-a" to L2 {
+  operation: "resolve"
+}
+
+resolve "entity-b" to L3 {
+  operation: "resolve"
+}
+
+resolve "entity-c" to L4 {
+  operation: "resolve"
+}
+
+emit {
+  target: "entity-c"
+  kind: multi-entity-resolution
+}

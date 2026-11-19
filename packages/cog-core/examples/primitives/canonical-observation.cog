@@ -1,0 +1,13 @@
+define entity "observed-signal" {
+  kind: observation
+  level: L1
+  operation: observe
+  attribute: "ambient-light"
+  value: "present"
+  confidence: 1
+}
+
+emit {
+  target: "observed-signal"
+  kind: observation
+}

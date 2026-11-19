@@ -1,0 +1,9 @@
+define entity "request" {
+  kind: record
+}
+define entity "profile" {
+  kind: record
+}
+relate "request" -> "profile" {
+  kind: "references"
+}
