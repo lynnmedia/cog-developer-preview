@@ -7,4 +7,5 @@ __MACOSX
 npm-debug.log*
 temp-pack-dist
 temp-consumer
+packages/cog-core/learning
 

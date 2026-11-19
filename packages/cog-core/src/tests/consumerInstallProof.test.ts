@@ -1,32 +1,44 @@
 import assert from "node:assert/strict";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
+const packageRoot = process.cwd().endsWith(path.join("packages", "cog-core"))
+  ? process.cwd()
+  : path.join(process.cwd(), "packages", "cog-core");
+
 test("End-to-end consumer install and bridge verification proof", () => {
-  const tempDir = path.join(__dirname, "tmp-consumer-proof");
-  const tarballPath = path.join(__dirname, "..", "..", "cog-core-0.3.0.tgz");
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "cog-consumer-install-proof-"));
+  const packDir = path.join(tempRoot, "pack");
+  const consumerDir = path.join(tempRoot, "consumer");
+  const npm = process.platform === "win32" ? "npm.cmd" : "npm";
 
-  // Ensure tarball exists
-  assert.ok(fs.existsSync(tarballPath), `Tarball not found at ${tarballPath}. Run npm pack first.`);
-
-  // Cleanup old temp directory if exists
-  if (fs.existsSync(tempDir)) {
-    fs.rmSync(tempDir, { recursive: true, force: true });
-  }
-  fs.mkdirSync(tempDir, { recursive: true });
+  fs.mkdirSync(packDir, { recursive: true });
+  fs.mkdirSync(consumerDir, { recursive: true });
 
   try {
-    // 1. Initialize temporary npm project
-    execSync("npm init -y", { cwd: tempDir, stdio: "ignore" });
+    // 1. Pack the exact package under test through its real prepack lifecycle.
+    const packOutput = execFileSync(
+      npm,
+      ["pack", "--json", "--silent", "--pack-destination", packDir],
+      { cwd: packageRoot, encoding: "utf8" },
+    );
+    const packInfo = JSON.parse(packOutput) as Array<{ filename: string }>;
+    const tarballPath = path.join(packDir, packInfo[0]!.filename);
+    assert.ok(fs.existsSync(tarballPath), `Packed tarball not found at ${tarballPath}`);
 
-    // 2. Install the local packed tarball
-    execSync(`npm install --no-save "${tarballPath}"`, { cwd: tempDir, stdio: "ignore" });
+    // 2. Initialize a clean downstream npm project and install only the tarball.
+    execFileSync(npm, ["init", "-y"], { cwd: consumerDir, stdio: "ignore" });
+    execFileSync(npm, ["install", "--no-save", "--ignore-scripts", tarballPath], {
+      cwd: consumerDir,
+      stdio: "ignore",
+    });
 
-    // 3. Write a consumer script that uses the installed package
+    // 3. Write a consumer script that uses the installed public package API.
     const scriptContent = `
-const { lex, parseCog, compileCog, validateCog, executeCog } = require("@cog/core");
+const { lex, parseCog, compileCog, validateCog, executeCog } = require("@winmedia/cog-core");
 
 async function run() {
   const source = \`
@@ -69,17 +81,16 @@ run().catch(err => {
 });
     `.trim();
 
-    fs.writeFileSync(path.join(tempDir, "index.js"), scriptContent, "utf-8");
+    fs.writeFileSync(path.join(consumerDir, "index.js"), scriptContent, "utf8");
 
-    // 4. Execute the script using node
-    const output = execSync("node index.js", { cwd: tempDir, encoding: "utf-8" }).trim();
+    // 4. Execute from the downstream project, not the repository checkout.
+    const output = execFileSync(process.execPath, ["index.js"], {
+      cwd: consumerDir,
+      encoding: "utf8",
+    }).trim();
 
-    // 5. Verify the consumer output
     assert.equal(output, "SUCCESS");
   } finally {
-    // Cleanup temp directory
-    if (fs.existsSync(tempDir)) {
-      fs.rmSync(tempDir, { recursive: true, force: true });
-    }
+    fs.rmSync(tempRoot, { recursive: true, force: true });
   }
 });

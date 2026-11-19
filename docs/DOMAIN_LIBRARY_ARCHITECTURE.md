@@ -6,7 +6,7 @@ This document defines the shared architecture, directory structure, export patte
 
 ## 1. Directory Structure
 
-All domain libraries reside under the `@cog/core` package within the `packages/cog-core/src/domain/` directory. This keeps domain reasoning patterns first-class and statically discoverable.
+All domain libraries reside under the `@winmedia/cog-core` package within the `packages/cog-core/src/domain/` directory. This keeps domain reasoning patterns first-class and statically discoverable.
 
 ```
 packages/cog-core/src/domain/

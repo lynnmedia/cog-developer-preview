@@ -4,10 +4,11 @@ on:
   push:
     branches:
       - main
-      - dao-refresh-developer-preview
+      - developer-preview
   pull_request:
     branches:
       - main
+      - developer-preview
   workflow_dispatch:
 
 jobs:

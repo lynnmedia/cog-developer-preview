@@ -15,7 +15,7 @@ test("HDCP-COGLIB-COMPOSED-PROOF-011: Full composed pipeline (SHAPE -> COMPARE -
   const rawArchNotes = {
     objectId: "arch-cog-boundary-v0.3",
     rawElements: [
-      { id: "elem-kernel", statement: "@cog/core provides ontology-agnostic AST, IR, and execution engine", sourceAnchor: "docs/PHILOSOPHY_AND_DESIGN_CONSTITUTION.md" },
+      { id: "elem-kernel", statement: "@winmedia/cog-core provides ontology-agnostic AST, IR, and execution engine", sourceAnchor: "docs/PHILOSOPHY_AND_DESIGN_CONSTITUTION.md" },
       { id: "elem-coglib", statement: "CogLib provides universal domain-agnostic routines (SHAPE, COMPARE, TRACE, CHALLENGE)", sourceAnchor: "docs/COGLIB_ARCHITECTURE_BOUNDARY.md" },
       { id: "elem-domains", statement: "Domain libraries specialize generic routines for Research, Editorial, and Decision Analysis", sourceAnchor: "docs/DOMAIN_LIBRARY_ARCHITECTURE.md" },
       { id: "elem-tools", statement: "Developer tools and snapshot testers live in Layer 4 Developer Tooling", sourceAnchor: "packages/cog-core/src/service" },

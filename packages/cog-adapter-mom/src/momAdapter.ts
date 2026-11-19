@@ -1,5 +1,5 @@
-import type { CogDomainAdapter, CoreEmission, CoreLevel, DomainEmissionSpec } from "@cog/core";
-import type { CoreExecutionContext, CoreIR } from "@cog/core";
+import type { CogDomainAdapter, CoreEmission, CoreLevel, DomainEmissionSpec } from "@winmedia/cog-core";
+import type { CoreExecutionContext, CoreIR } from "@winmedia/cog-core";
 
 const LEVEL_MAP: Record<CoreLevel, string> = {
   L1: "R1",

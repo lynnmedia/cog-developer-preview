@@ -81,6 +81,10 @@ export async function planCog(
       targetId: resolution.id,
       targetRef: resolution.targetRef,
       dependsOn: collectEntityBindDependencies(entityBindStepByRef, [resolution.targetRef]),
+      metadata: {
+        level: resolution.level,
+        status: resolution.attributes?.status,
+      },
     });
     recordTargetPreparation(targetPreparationStepIdsByRef, resolution.targetRef, step.id);
   }

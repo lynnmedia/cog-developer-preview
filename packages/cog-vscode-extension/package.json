@@ -4,6 +4,17 @@
   "description": "Minimal extension scaffold for the .cog language",
   "version": "0.1.0",
   "publisher": "lynnmedia",
+  "author": "Lynn Media",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynnmedia/cog-developer-preview.git",
+    "directory": "packages/cog-vscode-extension"
+  },
+  "homepage": "https://github.com/lynnmedia/cog-developer-preview#readme",
+  "bugs": {
+    "url": "https://github.com/lynnmedia/cog-developer-preview/issues"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },

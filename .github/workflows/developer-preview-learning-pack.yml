@@ -1,0 +1,32 @@
+name: Developer Preview Learning Pack
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  stranger-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Build public Developer Preview workspaces
+        run: npm run build:v0.3
+
+      - name: Run @winmedia/cog-core Developer Preview tests
+        run: npm run test -w @winmedia/cog-core
+
+      - name: Check whitespace
+        run: git diff --check

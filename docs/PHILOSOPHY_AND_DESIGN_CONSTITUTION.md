@@ -38,7 +38,7 @@ Resolutions bind entities, attributes, and relationships to specific values, lev
 ## 3. Permanent Invariants
 
 The `cog` kernel is governed by several unalterable invariants:
-1. **Core Ontology Agnosticism**: The core kernel (`@cog/core`) does not know about any specific domain (like MoM or AWB). It is entirely generic. All domain-specific semantics are injected downstream via adapters.
+1. **Core Ontology Agnosticism**: The core kernel (`@winmedia/cog-core`) does not know about any specific domain (like MoM or AWB). It is entirely generic. All domain-specific semantics are injected downstream via adapters.
 2. **Structural Determinism**: The execution pipeline is deterministic: `COMPILE → PLAN → VALIDATE → EXECUTE → EMIT → TRACE`. Given the same input and adapter, the pipeline will always produce the same structural execution path and trace.
 3. **Trace Mandatory**: Every execution must output a complete trace showing every step, binding, and emission. There is no hidden computation.
 

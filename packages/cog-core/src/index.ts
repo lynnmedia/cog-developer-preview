@@ -56,3 +56,4 @@ export * from "./service/patternSuggestionEngine";
 export * from "./service/workflowQualityMetrics";
 export * from "./lsp/lspService";
 export * from "./cli/index";
+export * from "./testing";

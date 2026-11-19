@@ -1,12 +1,12 @@
 # Downstream Consumer Handoff Guide
 
-This guide describes how downstream repositories and consumer applications should consume domain libraries, pipelines, and the core runtime exported by the `@cog/core` package.
+This guide describes how downstream repositories and consumer applications should consume domain libraries, pipelines, and the core runtime exported by the `@winmedia/cog-core` package.
 
 ---
 
 ## 1. Package Exports & Import Patterns
 
-All core compiler machinery, standard library functions, domain libraries, composition helper functions, and the registry are exported directly from the `@cog/core` npm package:
+All core compiler machinery, standard library functions, domain libraries, composition helper functions, and the registry are exported directly from the `@winmedia/cog-core` npm package:
 
 ```typescript
 import {
@@ -33,7 +33,7 @@ import {
   composeAuditToDecision,
   composeGraphToResearch,
   researchToBookPipeline
-} from "@cog/core";
+} from "@winmedia/cog-core";
 ```
 
 ---
@@ -88,8 +88,8 @@ Downstream consumers must follow the deterministic pipeline execution order:
 ### Canonical Consumption Example
 
 ```typescript
-import { lex, parseCog, compileCog, validateCog, planCog, executeCog } from "@cog/core";
-import { momAdapter } from "@cog/adapter-mom";
+import { lex, parseCog, compileCog, validateCog, planCog, executeCog } from "@winmedia/cog-core";
+import { momAdapter } from "@winmedia/cog-adapter-mom";
 
 const source = `
   define entity "my-node" {
@@ -137,7 +137,7 @@ console.log("Trace steps:", result.trace.steps);
 
 ## 5. Adapter & Kernel Boundaries
 
-- **Ontology-Agnostic Core**: The core kernel (`@cog/core`) is domain-neutral and knows nothing of MoM, audit, or decision taxonomies.
+- **Ontology-Agnostic Core**: The core kernel (`@winmedia/cog-core`) is domain-neutral and knows nothing of MoM, audit, or decision taxonomies.
 - **Adapter Projections**: Adapters (e.g., `momAdapter`, `decisionAdapter`) map neutral IR values (like `L1-L5` or generic `relate` kinds) to domain-specific terms (like `R1-R5` or specific dependency links) only during validation, planning, execution, and emission.
 - **Neutral Fallback**: When running without an adapter, the compiler and executor fallback to default, identity-neutral mapping.
 

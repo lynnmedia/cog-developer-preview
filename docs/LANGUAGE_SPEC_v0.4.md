@@ -1,24 +1,85 @@
 # Cog Language Specification v0.4
 
-This document defines the formal grammar, AST structures, intermediate representation, and execution contract for the Cog language version 0.4.
+Status: **Developer Preview teaching surface**
 
-## 1. Lexical Grammar
+This document defines the canonical public authoring profile for the Cog language as implemented by the current `@winmedia/cog-core` lexer and parser. The executable parser is the provisional authority when implementation and older prose disagree.
 
-### Tokens
-- **Keywords**: `define`, `entity`, `relate`, `view`, `as`, `resolve`, `to`, `transform`, `constrain`, `emit`.
-- **Identifiers**: Regex `[a-zA-Z_][a-zA-Z0-9_-]*`. Case-sensitive.
-- **Strings**: Characters enclosed in double quotes `"[^"]*"`.
-- **Levels**: Keyword `L` followed by digits `1` to `5` (e.g. `L1`, `L2`, `L3`, `L4`, `L5`).
-- **Operators / Symbols**:
-  - Arrow: `->`
-  - Colon: `:`
-  - Left Brace: `{`
-  - Right Brace: `}`
-- **Comments**: Single-line comments start with `//` and extend to the end of the line.
+Cog is a small, flat, declarative language for constructing governed semantic graphs. A Cog source file declares entities, relations, views, resolutions, transformations, constraints, and emissions. It does not provide general-purpose loops, functions, imports, or hidden control flow.
 
----
+## 1. Canonical Authoring Conventions
 
-## 2. Syntactic Grammar (EBNF)
+Developer Preview examples MUST use:
+
+- double-quoted strings;
+- `//` single-line comments;
+- explicit `target:` fields for `transform`, `constrain`, and `emit`;
+- flat blocks;
+- flat (non-nested) lists;
+- levels `L1` through `L5`.
+
+The lexer accepts some additional spellings for compatibility, including single-quoted strings. Those forms are not part of the canonical teaching profile.
+
+## 2. Lexical Grammar
+
+### Keywords
+
+`define`, `entity`, `relate`, `view`, `as`, `resolve`, `to`, `transform`, `constrain`, `emit`, `true`, `false`, `null`, `L1`, `L2`, `L3`, `L4`, `L5`.
+
+### Identifiers
+
+Identifiers begin with an ASCII letter or underscore and may continue with ASCII letters, digits, underscore, period, or hyphen.
+
+```text
+[A-Za-z_][A-Za-z0-9_.-]*
+```
+
+Identifiers are case-sensitive.
+
+### Strings
+
+Canonical examples use double quotes:
+
+```cog
+"example"
+```
+
+The lexer also accepts single-quoted strings as a compatibility convenience.
+
+### Numbers
+
+Integers and decimal values are supported.
+
+### Booleans and null
+
+`true`, `false`, and `null` are supported field values.
+
+### Levels
+
+`L1`, `L2`, `L3`, `L4`, `L5`.
+
+### Durations
+
+Duration tokens are a number followed by one of:
+
+`ms`, `s`, `m`, `min`, `h`, `d`, `w`.
+
+`min` is normalized to minutes (`m`) internally.
+
+### Symbols
+
+- relation arrow: `->`
+- colon: `:`
+- braces: `{` `}`
+- brackets: `[` `]`
+- comma: `,`
+
+### Comments
+
+Single-line comments begin with `//` and continue to the end of the line.
+
+## 3. Syntactic Grammar
+
+The public authoring grammar is:
 
 ```ebnf
 Program         ::= Statement*
@@ -27,33 +88,139 @@ Statement       ::= DefineEntity | Relate | View | Resolve | Transform | Constra
 DefineEntity    ::= "define" "entity" IdentifierOrString Block
 Relate          ::= "relate" IdentifierOrString "->" IdentifierOrString Block
 View            ::= "view" IdentifierOrString "as" Identifier Block
-Resolve         ::= "resolve" IdentifierOrString "to" Level Block?
-Transform       ::= "transform" IdentifierOrString Block
-Constrain       ::= "constrain" IdentifierOrString Block
-Emit            ::= "emit" IdentifierOrString Block?
+Resolve         ::= "resolve" IdentifierOrString "to" Level Block
+Transform       ::= "transform" TransformBlock
+Constrain       ::= "constrain" ConstrainBlock
+Emit            ::= "emit" EmitBlock
 
 Block           ::= "{" Field* "}"
-Field           ::= Identifier ":" Value
-Value           ::= IdentifierOrString | Level | Duration | List
-List            ::= "[" (Value ("," Value)*)? "]"
-Duration        ::= Digit+ ("ms" | "s" | "m" | "h")
+TransformBlock  ::= "{" TransformField* "}"
+ConstrainBlock  ::= "{" ConstrainField* "}"
+EmitBlock       ::= "{" EmitField* "}"
 
+Field           ::= FieldName ":" Value
+TransformField  ::= Field
+ConstrainField  ::= Field
+EmitField       ::= Field
+FieldName       ::= Identifier | "to" | "as"
+
+Value           ::= IdentifierOrString | Number | Boolean | Null | Level | Duration | List
+List            ::= "[" (Value ("," Value)*)? "]"
 IdentifierOrString ::= Identifier | String
+Level           ::= "L1" | "L2" | "L3" | "L4" | "L5"
 ```
 
----
+Nested lists are not supported.
 
-## 3. Abstract Syntax Tree (AST)
+## 4. Statement Contracts
 
-The parser maps the token stream to a `ProgramNode` AST:
-- Every statement is mapped to a typed node (e.g., `DefineEntityNode`, `RelateNode`, etc.) containing a `SourceSpan` (line, column, character offset range) for precise syntax diagnostics.
-- Blocks are parsed into arrays of `FieldNode` containing the field key name and value node.
+### `define entity`
 
----
+Declares an entity in the semantic graph.
 
-## 4. Intermediate Representation (IR)
+```cog
+define entity "proposal" {
+  kind: proposal
+  level: L1
+}
+```
 
-The compiler compiles the AST into a schema-enforced `CoreIR` shape:
+`kind:` is optional at parser level but should normally be present in public examples. `level:` is optional.
+
+### `relate`
+
+Declares a directed typed relation between two entities.
+
+```cog
+relate "evidence" -> "proposal" {
+  kind: supports
+}
+```
+
+`kind:` is required.
+
+### `view`
+
+Declares a perspective over an entity.
+
+```cog
+view "proposal" as operational {
+}
+```
+
+### `resolve`
+
+Declares a resolution target and level.
+
+```cog
+resolve "proposal" to L3 {
+}
+```
+
+The block is required by the current parser, although it may be empty.
+
+### `transform`
+
+Declares an explicit transformation reference.
+
+```cog
+transform {
+  target: "proposal"
+  to: assessed
+}
+```
+
+Both `target:` and `to:` are required.
+
+A transformation declaration records governed transformation intent in CoreIR and execution planning. The kernel does not imply a universal transformation algorithm from the keyword alone; actual transformation behavior may be supplied by a library, adapter, tool, or application.
+
+### `constrain`
+
+Declares a constraint over an explicit target.
+
+```cog
+constrain {
+  target: "proposal"
+  rule: "requires-evidence"
+}
+```
+
+`target:` is required. Core validation checks structural correctness and adapter-provided validation. Domain-specific rule evaluation must be implemented by the appropriate cognitive/library/domain layer rather than assumed from an arbitrary `rule:` string.
+
+### `emit`
+
+Declares a governed output projection.
+
+```cog
+emit {
+  target: "proposal"
+  kind: assessment
+}
+```
+
+**Developer Preview authoring requires an explicit `target:`.**
+
+The current parser retains a narrow backward-compatibility fallback that can infer the target when exactly one entity has been defined. That fallback is not canonical syntax, must not appear in Developer Preview examples, and may be removed in a future compatibility cleanup.
+
+## 5. Abstract Syntax Tree
+
+The parser maps source into a `ProgramNode` AST. Every statement becomes a typed AST node and carries source-span information for diagnostics.
+
+Statement node families are:
+
+- `DefineEntityNode`
+- `RelateNode`
+- `ViewNode`
+- `ResolveNode`
+- `TransformNode`
+- `ConstrainNode`
+- `EmitNode`
+
+Blocks are represented as flat arrays of `FieldNode` values.
+
+## 6. Intermediate Representation
+
+Compilation produces `CoreIR`, containing:
 
 ```ts
 interface CoreIR {
@@ -76,24 +243,30 @@ interface CoreIR {
 }
 ```
 
----
+CoreIR is the inspectable governed representation between source authoring and runtime execution.
 
-## 5. Execution Model and Determinism
+## 7. Validation, Planning, Execution, and Trace
 
-The Cog runtime execution contract requires:
-1. **Single-Pass Evaluation**: Computation proceeds forward in-memory from graph assembly to emissions.
-2. **Deterministic Timeline**: The planner converts the `CoreIR` into a stable `CoreExecutionPlan` comprising:
-   - `bind` phase: Resolves entity levels and values.
-   - `transform` phase: Performs declared structural updates.
-   - `validate` phase: Executes core validation policies and user-defined constraints.
-   - `emit` phase: Formulates outbound emissions payloads.
-3. **Execution Trace**: Every run produces a `CoreExecutionTrace` recording step results, timings (timestamps), success states, and errors.
+The canonical consumer pipeline is:
 
----
+```text
+LEX → PARSE → COMPILE → VALIDATE → PLAN → EXECUTE → EMISSIONS + TRACE
+```
 
-## 6. Domain Adapter Contract
+`executeCog()` also performs validation and planning internally before running its plan.
 
-Domain adapters must implement a subset of the `CogDomainAdapter` interface to specialize kernel behavior:
+The execution plan uses four kernel phases:
+
+1. `bind` — bind entity/reference state;
+2. `transform` — execute the declared transformation plan step and preserve its reference in trace state;
+3. `validate` — represent the governed validation phase;
+4. `emit` — create outbound emission payloads.
+
+Every execution returns a trace. Structural execution is deterministic for the same CoreIR, context, and adapter behavior.
+
+## 8. Domain Adapter Contract
+
+The kernel is ontology-agnostic. Domain adapters may specialize execution through hooks such as:
 
 ```ts
 interface CogDomainAdapter {
@@ -107,8 +280,22 @@ interface CogDomainAdapter {
   enrichPlan?(plan: CoreExecutionPlan, ir: CoreIR, context: CoreExecutionContext): Promise<CoreExecutionPlan>;
   mapEmission?(emission: CoreEmission, ir: CoreIR, context: CoreExecutionContext): Promise<DomainEmissionSpec>;
   resolveExternalRef?(ref: ObjectRef, context: CoreExecutionContext): Promise<ObjectRef | null | undefined>;
-  /** @deprecated Use resolveExternalRef. */
-  loadCanonicalRef?(ref: ObjectRef, context: CoreExecutionContext): Promise<ObjectRef | null | undefined>;
   createDomainTrace?(trace: CoreExecutionTrace, ir: CoreIR): Promise<unknown>;
 }
 ```
+
+Adapters specialize neutral kernel structures; they do not redefine the core language grammar.
+
+## 9. Explicit Non-Goals for the Developer Preview
+
+The v0.4 teaching surface does not include:
+
+- loops;
+- user-defined functions;
+- imports;
+- macros;
+- nested block control flow;
+- implicit cognitive inference from keyword names;
+- direct mutation of CoreIR as an authoring mechanism.
+
+The language remains intentionally small so that cognitive structure, transformation intent, constraints, emissions, and traces remain inspectable.

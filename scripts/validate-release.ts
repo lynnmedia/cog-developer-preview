@@ -11,14 +11,33 @@ const distributablePackages = [
   "packages/cog-adapter-decision"
 ];
 
+const canonicalPackageNames = [
+  "@winmedia/cog-core",
+  "@winmedia/cog-adapter-mom",
+  "@winmedia/cog-adapter-decision"
+] as const;
+
+const expectedTarballBasenames: Record<(typeof canonicalPackageNames)[number], string> = {
+  "@winmedia/cog-core": "winmedia-cog-core-0.3.0.tgz",
+  "@winmedia/cog-adapter-mom": "winmedia-cog-adapter-mom-0.3.0.tgz",
+  "@winmedia/cog-adapter-decision": "winmedia-cog-adapter-decision-0.3.0.tgz"
+};
+
 const requiredDocs = [
   "README.md",
+  "LICENSE",
+  "SECURITY.md",
+  "CONTRIBUTING.md",
+  "ROADMAP.md",
   "docs/GETTING_STARTED.md",
   "docs/AUTHORING_TUTORIAL.md",
   "docs/DOMAIN_LIBRARY_TUTORIALS.md",
   "docs/RELEASE_CHECKLIST.md",
   "docs/RELEASE_NOTES_DEVELOPER_PREVIEW.md",
   "docs/COG_DEVELOPER_PREVIEW_PUBLIC_DISTRIBUTION_MANIFEST_v0.1.md",
+  "docs/COG_DEVELOPER_PREVIEW_PACKAGE_MANIFEST_v0.1.md",
+  "docs/COG_PUBLIC_HISTORY_PROVENANCE_POLICY_v0.1.md",
+  "docs/COG_COGNITIVE_TEST_CAPABILITY_MATRIX_v0.1.md",
   "CHANGELOG.md"
 ];
 
@@ -57,10 +76,22 @@ const EXPECTED_CORE_EXPORTS = [
   "applyGovernedSpecialization",
   "applyMemoryEpistemicDecay",
   "assessMemoryUpdateEligibility",
+  "assertBlocked",
+  "assertBlockedBecause",
+  "assertCogOutput",
+  "assertCogState",
+  "assertEvaluation",
+  "assertInvariantPreserved",
+  "assertMemoryChanged",
+  "assertMemoryUnchanged",
+  "assertTraceContains",
+  "assertTransitionNotOccurred",
+  "assertTransitionOccurred",
   "auditLibrary",
   "challengeRoutine",
   "classify",
   "cognitiveEcologyLibrary",
+  "cognitiveTest",
   "compare",
   "compareRoutine",
   "compileCog",
@@ -75,9 +106,12 @@ const EXPECTED_CORE_EXPORTS = [
   "composePipeline",
   "composeResearchToEditorial",
   "computeCognitiveMetrics",
+  "createCognitiveScenario",
   "decisionAdapterLibraryProof",
   "decisionLibrary",
+  "defineCognitiveSuite",
   "devotionalIntelligenceLibrary",
+  "diagnoseCognitiveScenario",
   "discoverEligibleNodes",
   "domainRegistry",
   "driftLensInstrument",
@@ -89,9 +123,15 @@ const EXPECTED_CORE_EXPORTS = [
   "evaluateNodeDiscoveryMatch",
   "evaluateToolEvidenceInfluence",
   "executeCog",
+  "executeCognitiveScenario",
   "executeRoutineWithCapability",
   "executeRoutineWithGuards",
   "explain",
+  "extractTraceReferences",
+  "formatCognitiveDiagnostic",
+  "formatCognitiveDiagnosticReport",
+  "formatMetamorphicDiagnostic",
+  "generateScenarioDiagnostics",
   "getAuthorityRank",
   "governanceLibrary",
   "graphLibrary",
@@ -110,12 +150,15 @@ const EXPECTED_CORE_EXPORTS = [
   "project",
   "provenanceLineageInstrument",
   "reconcileMemoryConflict",
+  "registerCognitiveSuite",
   "relate",
   "researchLibrary",
   "researchToBookPipeline",
   "resolve",
   "routeAndDelegateCognitiveTask",
   "runCli",
+  "runCognitiveScenario",
+  "runCognitiveSuite",
   "shapeRoutine",
   "tensionFieldInstrument",
   "traceRoutine",
@@ -230,6 +273,10 @@ function checkPackageJson(pkgPath: string) {
     throw new Error(`Distributable package ${pkg.name} is marked private.`);
   }
 
+  if (!canonicalPackageNames.includes(pkg.name)) {
+    throw new Error(`Invalid canonical package name in ${pkgPath}: ${pkg.name}`);
+  }
+
   if (pkg.engines?.node !== "20.x" || pkg.engines?.npm !== ">=10") {
     throw new Error(`Invalid engine contract in ${pkgPath}; expected Node 20.x / npm >=10.`);
   }
@@ -247,6 +294,52 @@ function checkPackageJson(pkgPath: string) {
   }
 }
 
+function checkCanonicalNamespace() {
+  const core = readJson("packages/cog-core/package.json");
+  const mom = readJson("packages/cog-adapter-mom/package.json");
+  const decision = readJson("packages/cog-adapter-decision/package.json");
+
+  if (core.name !== "@winmedia/cog-core") {
+    throw new Error("Cog core must use the @winmedia/cog-core canonical npm identity.");
+  }
+  if (mom.name !== "@winmedia/cog-adapter-mom" || mom.dependencies?.[core.name] !== "^0.3.0") {
+    throw new Error("MoM adapter must depend on @winmedia/cog-core@^0.3.0.");
+  }
+  if (decision.name !== "@winmedia/cog-adapter-decision" || decision.dependencies?.[core.name] !== "^0.3.0") {
+    throw new Error("Decision adapter must depend on @winmedia/cog-core@^0.3.0.");
+  }
+}
+
+function checkNoLegacyNamespaceInActiveMaterials() {
+  const historicalEvidence = new Set([
+    "CHANGELOG.md",
+    "docs/COG_COGNITIVE_TEST_CAPABILITY_MATRIX_v0.1.md",
+    "docs/COG_PUBLIC_HISTORY_PROVENANCE_POLICY_v0.1.md"
+  ]);
+  const excludedDirectories = new Set([".git", "node_modules", "dist", "learning", "temp-pack-dist", "codex-summaries"]);
+  const legacyReference = "@cog/";
+  const findings: string[] = [];
+
+  function visit(relativeDir: string) {
+    const absoluteDir = path.join(rootDir, relativeDir);
+    for (const entry of fs.readdirSync(absoluteDir, { withFileTypes: true })) {
+      const relativePath = path.join(relativeDir, entry.name);
+      if (entry.isDirectory()) {
+        if (!excludedDirectories.has(entry.name) && !relativePath.startsWith("docs/reports")) {
+          visit(relativePath);
+        }
+      } else if (relativePath !== "scripts/validate-release.ts" && !historicalEvidence.has(relativePath) && fs.readFileSync(path.join(rootDir, relativePath), "utf8").includes(legacyReference)) {
+        findings.push(relativePath);
+      }
+    }
+  }
+
+  visit("");
+  if (findings.length > 0) {
+    throw new Error(`Active materials retain the retired @cog/* namespace: ${findings.join(", ")}`);
+  }
+}
+
 function checkDocumentation() {
   for (const doc of requiredDocs) {
     if (!fs.existsSync(path.join(rootDir, doc))) {
@@ -261,7 +354,7 @@ function checkDocumentation() {
 }
 
 function checkApiLock() {
-  console.log("Checking @cog/core API lock (114 approved symbols, 0 prohibited)...");
+  console.log("Checking @winmedia/cog-core API lock (114 approved symbols, 0 prohibited)...");
   const coreDistPath = path.join(rootDir, "packages/cog-core/dist/index.js");
   if (!fs.existsSync(coreDistPath)) {
     throw new Error("Missing packages/cog-core/dist/index.js; run build first.");
@@ -275,15 +368,15 @@ function checkApiLock() {
   const extra = actualExports.filter((key) => !expectedSorted.includes(key));
 
   if (missing.length > 0) {
-    throw new Error(`Missing expected exports in @cog/core: ${missing.join(", ")}`);
+    throw new Error(`Missing expected exports in @winmedia/cog-core: ${missing.join(", ")}`);
   }
   if (extra.length > 0) {
-    throw new Error(`Unexpected symbols found in @cog/core: ${extra.join(", ")}`);
+    throw new Error(`Unexpected symbols found in @winmedia/cog-core: ${extra.join(", ")}`);
   }
 
   for (const sym of PROHIBITED_INTEGRATION_SYMBOLS) {
     if (core[sym] !== undefined) {
-      throw new Error(`Prohibited integration symbol "${sym}" found in @cog/core export!`);
+      throw new Error(`Prohibited integration symbol "${sym}" found in @winmedia/cog-core export!`);
     }
   }
 }
@@ -310,6 +403,9 @@ function packDistributables(outDir: string): Record<string, string> {
       throw new Error(`Tarball not found at ${tarballPath}`);
     }
     tarballMap[pkgJson.name] = tarballPath;
+    if (tarballFileName !== expectedTarballBasenames[pkgJson.name as (typeof canonicalPackageNames)[number]]) {
+      throw new Error(`Unexpected tarball basename for ${pkgJson.name}: ${tarballFileName}`);
+    }
     console.log(`- Packed ${pkgJson.name}@${pkgJson.version} -> ${tarballFileName} (${fs.statSync(tarballPath).size} bytes)`);
   }
 
@@ -353,9 +449,9 @@ function proveIsolatedConsumer(tarballMap: Record<string, string>) {
       private: true,
       type: "commonjs",
       dependencies: {
-        "@cog/core": `file:${tarballMap["@cog/core"]}`,
-        "@cog/adapter-mom": `file:${tarballMap["@cog/adapter-mom"]}`,
-        "@cog/adapter-decision": `file:${tarballMap["@cog/adapter-decision"]}`
+        "@winmedia/cog-core": `file:${tarballMap["@winmedia/cog-core"]}`,
+        "@winmedia/cog-adapter-mom": `file:${tarballMap["@winmedia/cog-adapter-mom"]}`,
+        "@winmedia/cog-adapter-decision": `file:${tarballMap["@winmedia/cog-adapter-decision"]}`
       }
     };
 
@@ -366,9 +462,9 @@ function proveIsolatedConsumer(tarballMap: Record<string, string>) {
 
     const proofScriptContent = `
 const assert = require("node:assert/strict");
-const { lex, parseCog, compileCog, validateCog, executeCog, CogProgramBuilder, observe, relate } = require("@cog/core");
-const { momAdapter } = require("@cog/adapter-mom");
-const { decisionAdapter } = require("@cog/adapter-decision");
+const { lex, parseCog, compileCog, validateCog, executeCog, CogProgramBuilder, observe, relate } = require("@winmedia/cog-core");
+const { momAdapter } = require("@winmedia/cog-adapter-mom");
+const { decisionAdapter } = require("@winmedia/cog-adapter-decision");
 
 async function runProof() {
   console.log("Consumer Proof 1: Pure Core .cog flow (lex -> parse -> compile -> validate -> execute)");
@@ -427,14 +523,14 @@ async function runProof() {
   assert.equal(execResult.emissions.length, 1, "One emission produced");
   assert.equal(execResult.emissions[0].kind, "cognitive_emission");
 
-  console.log("Consumer Proof 2: Execution with @cog/adapter-mom");
+  console.log("Consumer Proof 2: Execution with @winmedia/cog-adapter-mom");
   const momExecResult = await executeCog(ir, context, momAdapter);
   assert.equal(momExecResult.success, true, "MoM execution succeeded");
   assert.equal(momExecResult.adapterId, "mom");
   assert.ok(momExecResult.emissions.length > 0);
   assert.equal(momExecResult.emissions[0].target, "mom:cognitive_emission");
 
-  console.log("Consumer Proof 3: Execution with @cog/adapter-decision");
+  console.log("Consumer Proof 3: Execution with @winmedia/cog-adapter-decision");
   const decExecResult = await executeCog(ir, context, decisionAdapter);
   assert.equal(decExecResult.success, true, "Decision adapter execution succeeded");
   assert.equal(decExecResult.adapterId, "decision");
@@ -459,6 +555,36 @@ async function runProof() {
   assert.equal(builtValidation.valid, true);
   const builtExec = await executeCog(builtIr, context);
   assert.equal(builtExec.success, true);
+
+  console.log("Consumer Proof 6: Cognitive test model and scenario execution");
+  const { createCognitiveScenario, executeCognitiveScenario, assertCogOutput, assertBlocked, diagnoseCognitiveScenario, formatCognitiveDiagnosticReport } = require("@winmedia/cog-core");
+  const scenario = createCognitiveScenario({
+    id: "consumer-scen-1",
+    name: "Consumer Cognitive Scenario",
+    given: { source },
+    expected: {
+      success: true,
+      emissions: [{ kind: "cognitive_emission", target: "concept-beta" }]
+    }
+  });
+  const scenResult = await executeCognitiveScenario(scenario);
+  assert.equal(scenResult.success, true);
+  assertCogOutput(scenResult, { kind: "cognitive_emission" });
+
+  console.log("Consumer Proof 7: Cognitive scenario diagnostics and formatting");
+  const diagScenario = createCognitiveScenario({
+    id: "consumer-diag-1",
+    name: "Induced Output Mismatch Scenario",
+    given: { source },
+    expected: {
+      success: true,
+      emissions: [{ kind: "different_unmatched_emission" }]
+    }
+  });
+  const diagReport = await diagnoseCognitiveScenario(diagScenario);
+  assert.equal(diagReport.passed, false);
+  assert.equal(diagReport.diagnostics[0].category, "OUTPUT_MISMATCH");
+  assert.ok(diagReport.formattedText.includes("OUTPUT_MISMATCH"));
 
   console.log("=== ALL ISOLATED CONSUMER PROOFS PASSED CLEANLY ===");
 }
@@ -492,6 +618,8 @@ function main() {
   for (const pkg of distributablePackages) {
     checkPackageJson(pkg);
   }
+  checkCanonicalNamespace();
+  checkNoLegacyNamespaceInActiveMaterials();
 
   console.log("4. Verifying current release documentation...");
   checkDocumentation();
@@ -499,7 +627,7 @@ function main() {
   console.log("5. Running v0.3 regression suite...");
   runCommand("npm run test:v0.3");
 
-  console.log("6. Verifying public API lock on @cog/core...");
+  console.log("6. Verifying public API lock on @winmedia/cog-core...");
   checkApiLock();
 
   console.log("7. Packing distributable packages and verifying archive contents...");

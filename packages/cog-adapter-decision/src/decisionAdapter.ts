@@ -1,5 +1,5 @@
-import type { CogDomainAdapter, CoreEmission, DomainEmissionSpec } from "@cog/core";
-import type { CoreExecutionContext, CoreIR } from "@cog/core";
+import type { CogDomainAdapter, CoreEmission, DomainEmissionSpec } from "@winmedia/cog-core";
+import type { CoreExecutionContext, CoreIR } from "@winmedia/cog-core";
 
 export const decisionAdapter: CogDomainAdapter = {
   adapterId: "decision",

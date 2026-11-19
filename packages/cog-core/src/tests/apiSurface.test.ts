@@ -37,10 +37,22 @@ const EXPECTED_EXPORTS = [
   "applyGovernedSpecialization",
   "applyMemoryEpistemicDecay",
   "assessMemoryUpdateEligibility",
+  "assertBlocked",
+  "assertBlockedBecause",
+  "assertCogOutput",
+  "assertCogState",
+  "assertEvaluation",
+  "assertInvariantPreserved",
+  "assertMemoryChanged",
+  "assertMemoryUnchanged",
+  "assertTraceContains",
+  "assertTransitionNotOccurred",
+  "assertTransitionOccurred",
   "auditLibrary",
   "challengeRoutine",
   "classify",
   "cognitiveEcologyLibrary",
+  "cognitiveTest",
   "compare",
   "compareRoutine",
   "compileCog",
@@ -55,9 +67,12 @@ const EXPECTED_EXPORTS = [
   "composePipeline",
   "composeResearchToEditorial",
   "computeCognitiveMetrics",
+  "createCognitiveScenario",
   "decisionAdapterLibraryProof",
   "decisionLibrary",
+  "defineCognitiveSuite",
   "devotionalIntelligenceLibrary",
+  "diagnoseCognitiveScenario",
   "discoverEligibleNodes",
   "domainRegistry",
   "driftLensInstrument",
@@ -69,9 +84,15 @@ const EXPECTED_EXPORTS = [
   "evaluateNodeDiscoveryMatch",
   "evaluateToolEvidenceInfluence",
   "executeCog",
+  "executeCognitiveScenario",
   "executeRoutineWithCapability",
   "executeRoutineWithGuards",
   "explain",
+  "extractTraceReferences",
+  "formatCognitiveDiagnostic",
+  "formatCognitiveDiagnosticReport",
+  "formatMetamorphicDiagnostic",
+  "generateScenarioDiagnostics",
   "getAuthorityRank",
   "governanceLibrary",
   "graphLibrary",
@@ -90,12 +111,15 @@ const EXPECTED_EXPORTS = [
   "project",
   "provenanceLineageInstrument",
   "reconcileMemoryConflict",
+  "registerCognitiveSuite",
   "relate",
   "researchLibrary",
   "researchToBookPipeline",
   "resolve",
   "routeAndDelegateCognitiveTask",
   "runCli",
+  "runCognitiveScenario",
+  "runCognitiveSuite",
   "shapeRoutine",
   "tensionFieldInstrument",
   "traceRoutine",
@@ -113,7 +137,7 @@ const EXPECTED_EXPORTS = [
   "verifyCompositionCompatibility"
 ];
 
-test("Proprietary and excluded integration surfaces are not reachable through the public @cog/core entrypoint", () => {
+test("Proprietary and excluded integration surfaces are not reachable through the public @winmedia/cog-core entrypoint", () => {
   const prohibitedSymbols = [
     "generateAuditWorkbenchWorkflow",
     "generateBookFactoryOutlineWorkflow",
@@ -132,7 +156,7 @@ test("Proprietary and excluded integration surfaces are not reachable through th
     assert.equal(
       (core as Record<string, unknown>)[symbol],
       undefined,
-      `Prohibited integration symbol "${symbol}" must not be exported from the public @cog/core entrypoint.`
+      `Prohibited integration symbol "${symbol}" must not be exported from the public @winmedia/cog-core entrypoint.`
     );
   }
 });

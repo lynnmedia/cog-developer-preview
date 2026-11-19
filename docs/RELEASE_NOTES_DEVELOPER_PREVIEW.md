@@ -1,19 +1,19 @@
-# cog Developer Preview 0.3
+# Cog Developer Preview 0.3
 
 ## Release posture
 
-This release is a controlled developer preview of the cog language/kernel. It is intended for learning, experimentation, clean-consumer integration, and controlled downstream adoption. It is not a 1.0 compatibility promise.
+This release is a controlled Developer Preview of the Cog language, kernel, CLI, learning surface, and approved public adapters. It is intended for learning, experimentation, clean-consumer integration, and controlled downstream adoption. It is not a 1.0 compatibility promise.
 
 ## Public distribution boundary
 
 Primary package:
 
-- `@cog/core` 0.3.0
+- `@winmedia/cog-core` 0.3.0
 
-Optional domain adapters:
+Optional public adapters:
 
-- `@cog/adapter-mom`
-- `@cog/adapter-decision`
+- `@winmedia/cog-adapter-mom` 0.3.0
+- `@winmedia/cog-adapter-decision` 0.3.0
 
 Developer tooling:
 
@@ -23,47 +23,130 @@ The root `cog` monorepo package remains private. Cognitive Workspace and Book As
 
 ## Capability surface
 
-The Developer Preview includes the `.cog` lexer/parser, AST, CoreIR compilation, validation, planning, deterministic runtime execution, traces, diagnostics, identity/governance contracts, workflow linting and inspection services, and documented adapter boundaries.
+The Developer Preview includes:
+
+- the `.cog` lexer/parser and AST;
+- CoreIR compilation;
+- structural validation and planning;
+- deterministic runtime execution;
+- emissions and execution traces;
+- diagnostics and resource guards;
+- workflow linting and graph inspection;
+- trace inspection and execution-trace diffing;
+- domain-library discovery and workflow catalog inspection;
+- documented adapter boundaries;
+- the packaged Developer Preview learning curriculum and canonical examples.
+
+Cog represents, governs, plans, validates, traces, composes, and executes declared cognition. Domain-specific cognitive algorithms remain the responsibility of CogLib routines, domain libraries, adapters, tools, or applications when they are not already represented explicitly in a Cog program.
+
+## Installed CLI
+
+Installing `@winmedia/cog-core` exposes the `cog` executable. For a normal local installation, the documented form is:
+
+```bash
+npx --no-install cog <command>
+```
+
+The Developer Preview command surface is:
+
+```text
+discover
+workflows
+validate <file>
+lint <file>
+graph <file>
+run <file>
+trace <file> [--phase <phase>]
+diff <before.cog> <after.cog>
+```
+
+`diff` compares execution traces produced by two Cog programs; it is not a source-text diff.
 
 ## Learning path
 
-Start with:
+The repository teaching authorities are:
 
-1. `docs/GETTING_STARTED.md`
-2. `docs/AUTHORING_TUTORIAL.md`
-3. `docs/DOMAIN_LIBRARY_TUTORIALS.md`
-4. `packages/cog-core/examples`
+1. `docs/START_HERE.md`
+2. `docs/LEVEL_1_LANGUAGE_AND_COGNITIVE_PATTERNS.md`
+3. `docs/GOVERNED_DECISION_TUTORIAL.md`
+4. `docs/LEVEL_2_COMPOSABLE_COGNITIVE_UTILITIES.md`
+5. `docs/LEVEL_3_COGNITIVE_APPLICATIONS.md`
 
-The intended clean-consumer experience is: install `@cog/core`, author a `.cog` workflow, compile it, validate it, execute it, and inspect its trace using only documented public exports.
+The packaged `@winmedia/cog-core` artifact ships distribution copies under:
+
+```text
+learning/MANIFEST.md
+learning/START_HERE.md
+learning/LEVEL_1_LANGUAGE_AND_COGNITIVE_PATTERNS.md
+learning/GOVERNED_DECISION_TUTORIAL.md
+learning/LEVEL_2_COMPOSABLE_COGNITIVE_UTILITIES.md
+learning/LEVEL_3_COGNITIVE_APPLICATIONS.md
+examples/
+```
+
+A normal installed consumer can therefore learn and execute Cog without a checkout of the monorepo.
+
+## Canonical learning applications
+
+The Level-3 reference application set includes:
+
+1. Research Synthesis
+2. Document Review / Drift Detection
+3. Decision Analysis
+4. Audit Reasoning
+5. Knowledge Graph
+
+These are executable reference application shapes, not claims that the neutral kernel independently derives all represented domain conclusions.
 
 ## Compatibility
 
 - Node.js: 20.x
-- npm: 10+
-- Core package version: 0.3.0
-- Root monorepo package: private/non-publishable
+- npm: >=10
+- `@winmedia/cog-core`: 0.3.0
+- `@winmedia/cog-adapter-mom`: 0.3.0
+- `@winmedia/cog-adapter-decision`: 0.3.0
+- root monorepo package: private/non-publishable
 
-Public contracts may still evolve before 1.0. Consumers should avoid internal source-path imports.
+Public contracts may still evolve before 1.0. Consumers should avoid internal source-path imports and rely on documented package exports and the installed CLI.
 
 ## Known limitations
 
-- No standalone general-purpose `cog` command-line compiler is promised by this preview; the documented authoring path uses the `@cog/core` API.
-- The VS Code package is developer tooling and should be treated independently from npm publication of the kernel packages.
-- Cognitive Workspace and Book Assistant demonstrate downstream use but are not part of the core distribution contract.
-- Publication to npm or another registry requires separate explicit release authorization.
+- This is a Developer Preview, not a 1.0 stability guarantee.
+- The base kernel is deliberately neutral and does not silently supply arbitrary sensing, comparison, classification, transformation, constraint-predicate, or domain-reasoning algorithms.
+- The VS Code package is developer tooling and has an independent distribution path from npm publication of the kernel packages.
+- Cognitive Workspace and Book Assistant are downstream applications and are outside the public core distribution contract.
+- Publication to npm or another external registry requires separate explicit repository-owner authorization.
+
+## Learning-pack and consumer proof
+
+DP-LEARN-008 assembled the learning pack into the actual `@winmedia/cog-core` tarball and proved it from a clean downstream project. The stranger test verifies that an installed consumer can:
+
+- locate the curriculum and canonical examples;
+- run the installed CLI;
+- validate and execute the ten Level-1 examples;
+- validate, lint, graph, run, and trace the governed-decision tutorial;
+- locate and inspect all five Level-3 applications;
+- run trace comparisons through the installed package.
+
+The Developer Preview learning-pack gate and the broader release-validation gate have both passed on the reconciled Developer Preview baseline.
 
 ## DAOH provenance
 
 The original Distribution, Adoption, and Operational Hardening program established clean TypeScript and DSL consumer pilots, diagnostics, determinism and backward-compatibility proofs, tutorials, external-author usability, release governance, and an adoption-readiness gate in July 2026.
 
-This Developer Preview refresh revalidates that program against the current monorepo boundary and documentation rather than creating a second distribution architecture.
+The current Developer Preview reconciles that release-hardening work with the CLI-first learning pack and the current public/private monorepo boundary rather than creating a second distribution architecture.
 
 ## Verification
 
-Run:
+From a clean repository checkout, run the release-oriented sequence:
 
 ```bash
+npm ci
+npm run build:v0.3
+npm test
+npm run test:v0.3
 npm run validate:release
+git diff --check
 ```
 
-The current release gate verifies the root/private boundary, current v0.3 workspace build including VS Code tooling, distributable package metadata, documentation freshness constraints, regression tests, and npm package dry-runs.
+The hosted release workflows exercise the package-specific learning/stranger gate and the broader release-validation gate.

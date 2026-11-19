@@ -1,6 +1,6 @@
 # Cog Domain Library Tutorials
 
-This document provides tutorials for four standard reference domain libraries provided with `@cog/core`: **Editorial Review**, **Research Synthesis**, **Decision Analysis**, and **Audit Reasoning**. Each tutorial explains the domain ontology mapping and demonstrates how to execute it on the Cog kernel.
+This document provides tutorials for four standard reference domain libraries provided with `@winmedia/cog-core`: **Editorial Review**, **Research Synthesis**, **Decision Analysis**, and **Audit Reasoning**. Each tutorial explains the domain ontology mapping and demonstrates how to execute it on the Cog kernel.
 
 ---
 

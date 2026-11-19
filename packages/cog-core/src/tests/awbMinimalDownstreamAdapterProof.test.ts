@@ -164,7 +164,7 @@ test("kernel boundary, parser surface, and optional hooks stay neutral", async (
   assert.equal(corePlan.includes("awb"), false);
   assert.equal(coreValidate.includes("awb"), false);
   assert.equal(adapterTypes.includes("awb"), false);
-  assert.equal(adapterSource.includes('from "@cog/core"'), true);
+  assert.equal(adapterSource.includes('from "@winmedia/cog-core"'), true);
   assert.equal(adapterTypes.includes("mapRelationKind?"), true);
   assert.equal(adapterTypes.includes("createDomainTrace?"), true);
   assert.equal(adapterTypes.includes("resolveExternalRef?"), true);

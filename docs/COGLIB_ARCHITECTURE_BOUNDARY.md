@@ -30,7 +30,7 @@ The cognitive computing stack in the `cog` ecosystem is structured into five can
                                      │ builds upon
                                      ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
-│ Layer 1: Cog Kernel (@cog/core)                                         │
+│ Layer 1: Cog Kernel (@winmedia/cog-core)                                         │
 │ (Language AST, CoreIR, Deterministic Pipeline, Structural Invariants)  │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
@@ -39,7 +39,7 @@ The cognitive computing stack in the `cog` ecosystem is structured into five can
 
 ## 2. Layer Definitions and Responsibilities
 
-### Layer 1: Cog Kernel (`@cog/core`)
+### Layer 1: Cog Kernel (`@winmedia/cog-core`)
 - **Responsibility**: Provides the core `.cog` language grammar, AST representation, neutral CoreIR, deterministic execution pipeline (`COMPILE → PLAN → VALIDATE → EXECUTE → EMIT → TRACE`), and structural invariant validation.
 - **Epistemic Stance**: Purely ontology-agnostic, side-effect-free, and deterministic.
 - **Dependencies**: Zero internal domain dependencies; Node standard library / minimal foundational utilities only.
@@ -47,7 +47,7 @@ The cognitive computing stack in the `cog` ecosystem is structured into five can
 ### Layer 2: CogLib (Universal Cognitive Standard Library)
 - **Responsibility**: Provides universal, domain-agnostic cognitive routines (e.g. hypothesis testing, tension reconciliation, perspective synthesis, concept evolution, epistemic provenance tracing) and composition operators.
 - **Epistemic Stance**: Operates over abstract cognitive entities, relations, perspectives, tensions, and provenance traces without binding to any specific subject domain.
-- **Permitted Dependencies**: Cog Kernel (`@cog/core`) ONLY.
+- **Permitted Dependencies**: Cog Kernel (`@winmedia/cog-core`) ONLY.
 - **Prohibited Dependencies**: Domain libraries, Machine Editions, persistence/database drivers, network/API clients, or application shells.
 
 ### Layer 3: Domain Libraries & Machine Editions (MEs)
@@ -81,7 +81,7 @@ To preserve CogLib as a reusable, universal cognitive standard library, CogLib i
 
 | Category | Prohibited In CogLib | Canonical Home |
 | :--- | :--- | :--- |
-| **Kernel Primitives** | AST nodes, CoreIR evaluation instructions, language grammar | Layer 1 (`@cog/core`) |
+| **Kernel Primitives** | AST nodes, CoreIR evaluation instructions, language grammar | Layer 1 (`@winmedia/cog-core`) |
 | **Domain Knowledge** | Music scales, scientific taxonomies, code syntax trees, SROW concepts | Layer 3 (Domain Libraries / MEs) |
 | **Application Policy** | User session state machines, CLI prompts, formatting rules, pricing | Layer 5 (Applications) |
 | **Tool Integrations** | LLM API clients, HTTP fetchers, process execution, bash commands | Layer 4 (Tools) / Layer 5 |

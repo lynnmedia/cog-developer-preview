@@ -18,9 +18,9 @@ Release machinery proves that all distributable packages can be packed into stan
 
 ## 2. Distributable Package Register
 
-### 2.1. `@cog/core` (Canonical Kernel & Substrate)
+### 2.1. `@winmedia/cog-core` (Canonical Kernel & Substrate)
 
-- **Package Name**: `@cog/core`
+- **Package Name**: `@winmedia/cog-core`
 - **Version**: `0.3.0`
 - **Public Role**: Canonical ontology-agnostic cognition kernel, AST/IR compiler, validator, execution runtime, standard library (`coglib`), developer tooling, and reference domain libraries.
 - **Package Archive**: `cog-core-0.3.0.tgz` (~127.8 kB packed, 565.5 kB unpacked, 228 files)
@@ -47,7 +47,7 @@ Release machinery proves that all distributable packages can be packed into stan
   - `package.json`, `README.md`.
 - **Excluded Path Assertions**:
   - Excluded: `src/tests/**`, `*.test.ts`, `node_modules`, `temp-*`, `artifacts/**`, proprietary application bridges.
-  - Excluded from public index: `dist/integration/**` (unreachable from `@cog/core` export barrel).
+  - Excluded from public index: `dist/integration/**` (unreachable from `@winmedia/cog-core` export barrel).
 - **Clean-Install & Execution Proof**:
   - Installed into isolated temporary consumer without monorepo link.
   - Proven canonical flow: `lex → parseCog → compileCog → validateCog → executeCog`.
@@ -56,9 +56,9 @@ Release machinery proves that all distributable packages can be packed into stan
 
 ---
 
-### 2.2. `@cog/adapter-mom` (Mind-over-Matter Adapter)
+### 2.2. `@winmedia/cog-adapter-mom` (Mind-over-Matter Adapter)
 
-- **Package Name**: `@cog/adapter-mom`
+- **Package Name**: `@winmedia/cog-adapter-mom`
 - **Version**: `0.3.0`
 - **Public Role**: First-class companion adapter mapping Cog core levels to Mind-over-Matter tiers (`R1`–`R5`), enriching execution plans with verification steps, and emitting `mom:` payloads.
 - **Package Archive**: `cog-adapter-mom-0.3.0.tgz` (~1.3 kB packed, 2.9 kB unpacked, 5 files)
@@ -67,20 +67,20 @@ Release machinery proves that all distributable packages can be packed into stan
   - `types`: `./dist/index.d.ts`
   - `exports`: `{ ".": { "types": "./dist/index.d.ts", "require": "./dist/index.js", "default": "./dist/index.js" } }`
 - **Dependencies**:
-  - `@cog/core`: `^0.3.0`
+  - `@winmedia/cog-core`: `^0.3.0`
 - **Packed File Inventory**:
   - `dist/index.js`, `dist/index.d.ts`
   - `dist/momAdapter.js`, `dist/momAdapter.d.ts`
   - `package.json`
 - **Clean-Install & Execution Proof**:
-  - Installed and resolved alongside `@cog/core` in isolated consumer.
+  - Installed and resolved alongside `@winmedia/cog-core` in isolated consumer.
   - Passed `executeCog(ir, context, momAdapter)` with plan enrichment and `mom:` emissions validated.
 
 ---
 
-### 2.3. `@cog/adapter-decision` (Decision Domain Adapter)
+### 2.3. `@winmedia/cog-adapter-decision` (Decision Domain Adapter)
 
-- **Package Name**: `@cog/adapter-decision`
+- **Package Name**: `@winmedia/cog-adapter-decision`
 - **Version**: `0.3.0`
 - **Public Role**: First-class companion adapter for clinical/decision support workflows with plan validation steps and `decision:` emission mappings.
 - **Package Archive**: `cog-adapter-decision-0.3.0.tgz` (~1.1 kB packed, 2.5 kB unpacked, 5 files)
@@ -89,13 +89,13 @@ Release machinery proves that all distributable packages can be packed into stan
   - `types`: `./dist/index.d.ts`
   - `exports`: `{ ".": { "types": "./dist/index.d.ts", "require": "./dist/index.js", "default": "./dist/index.js" } }`
 - **Dependencies**:
-  - `@cog/core`: `^0.3.0`
+  - `@winmedia/cog-core`: `^0.3.0`
 - **Packed File Inventory**:
   - `dist/index.js`, `dist/index.d.ts`
   - `dist/decisionAdapter.js`, `dist/decisionAdapter.d.ts`
   - `package.json`
 - **Clean-Install & Execution Proof**:
-  - Installed and resolved alongside `@cog/core` in isolated consumer.
+  - Installed and resolved alongside `@winmedia/cog-core` in isolated consumer.
   - Passed `executeCog(ir, context, decisionAdapter)` with `decision:` emissions validated.
 
 ---
@@ -112,11 +112,11 @@ Release machinery proves that all distributable packages can be packed into stan
 ## 3. Dependency & Boundary Graph
 
 ```text
-[ @cog/adapter-mom ] ------+
+[ @winmedia/cog-adapter-mom ] ------+
                             |
-                            +---> [ @cog/core ] <--- [ Isolated Consumer Proof ]
+                            +---> [ @winmedia/cog-core ] <--- [ Isolated Consumer Proof ]
                             |
-[ @cog/adapter-decision ] --+
+[ @winmedia/cog-adapter-decision ] --+
 ```
 
 - **Root Package**: Marked `"private": true`. Never published.
@@ -134,7 +134,7 @@ The release validation harness enforces:
 4. Strict package metadata verification (fields, private flags, engine contracts, external dependencies).
 5. Verification of all required release documentation.
 6. Execution of full v0.3 regression suite (331 passing tests).
-7. Strict verification of the 114-symbol `@cog/core` public API lock.
+7. Strict verification of the 114-symbol `@winmedia/cog-core` public API lock.
 8. Physical package packing (`npm pack`) to temporary staging directory and archive content audit.
 9. Spin-up of an isolated external consumer in a separate directory:
    - `npm install` of generated `.tgz` archives

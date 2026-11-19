@@ -1,0 +1,86 @@
+define entity "deployment-proposal" {
+  kind: proposal
+  level: L1
+  candidate: "release-2026-08"
+  status: "under-review"
+}
+
+define entity "availability-evidence" {
+  kind: evidence
+  level: L1
+  finding: "capacity-test-passed"
+  confidence: 0.92
+}
+
+define entity "security-evidence" {
+  kind: evidence
+  level: L1
+  finding: "security-review-complete"
+  confidence: 0.88
+}
+
+relate "availability-evidence" -> "deployment-proposal" {
+  kind: supports
+  basis: "capacity"
+}
+
+relate "security-evidence" -> "deployment-proposal" {
+  kind: qualifies
+  basis: "security-review"
+}
+
+view "deployment-proposal" as operations {
+  focus: ["availability", "rollback"]
+}
+
+view "deployment-proposal" as governance {
+  focus: ["security", "evidence"]
+}
+
+resolve "deployment-proposal" to L2 {
+  reason: "evidence-reviewed"
+}
+
+define entity "governed-assessment" {
+  kind: assessment
+  level: L2
+  status: "provisional"
+  finding: "ready-with-rollback"
+}
+
+transform {
+  target: "deployment-proposal"
+  to: assemble-governed-assessment
+  operation: "transform"
+}
+
+relate "deployment-proposal" -> "governed-assessment" {
+  kind: transforms-to
+  operation: "transform"
+}
+
+constrain {
+  target: "governed-assessment"
+  operation: "constrain"
+  rule: "rollback-plan-required"
+}
+
+define entity "deployment-decision" {
+  kind: decision
+  level: L3
+  outcome: "approve-with-conditions"
+  condition: "rollback-plan-present"
+}
+
+relate "governed-assessment" -> "deployment-decision" {
+  kind: informs-decision
+}
+
+resolve "deployment-decision" to L3 {
+  reason: "review-complete"
+}
+
+emit {
+  target: "deployment-decision"
+  kind: "governed-decision"
+}

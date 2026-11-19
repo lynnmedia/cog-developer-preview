@@ -27,12 +27,12 @@ All public surfaces in the `cog` ecosystem follow Semantic Versioning (SemVer) `
 - **Optional Hooks**: Adding optional hook overrides increment the minor version.
 
 ### 2.4 Domain Libraries
-- Domain libraries (e.g., `planningLibrary`, `researchLibrary`) are packaged within `@cog/core` and follow its release cadence.
+- Domain libraries (e.g., `planningLibrary`, `researchLibrary`) are packaged within `@winmedia/cog-core` and follow its release cadence.
 - Enhancing domain generators to support new optional arguments increments the minor version.
 
 ---
 
 ## 3. Releases and Packages
 
-- Core packages (such as `@cog/core`, `@cog/adapter-mom`, `@cog/adapter-decision`) are versioned concurrently.
+- Core packages (such as `@winmedia/cog-core`, `@winmedia/cog-adapter-mom`, `@winmedia/cog-adapter-decision`) are versioned concurrently.
 - Package versions are updated via unified release scripts (`npm run release:local` or CI release steps) to prevent dependency version drift.

@@ -44,7 +44,7 @@ test("HDCP-COG-EVALUATION-CONTRACT-018: Evaluates generic CogLib, Music speciali
     qualificationsAndUncertainty: ["Evaluated over synthetic unstructured input dataset"],
     reproducibility: {
       deterministic: true,
-      runtimeEnvironment: "Node.js v20 / @cog/core 0.3.0",
+      runtimeEnvironment: "Node.js v20 / @winmedia/cog-core 0.3.0",
     },
   };
 
@@ -89,7 +89,7 @@ test("HDCP-COG-EVALUATION-CONTRACT-018: Evaluates generic CogLib, Music speciali
     qualificationsAndUncertainty: [],
     reproducibility: {
       deterministic: true,
-      runtimeEnvironment: "Node.js v20 / @cog/core 0.3.0",
+      runtimeEnvironment: "Node.js v20 / @winmedia/cog-core 0.3.0",
     },
   };
 
@@ -132,7 +132,7 @@ test("HDCP-COG-EVALUATION-CONTRACT-018: Evaluates generic CogLib, Music speciali
     qualificationsAndUncertainty: ["Confounding inspection relies on DAG heuristic"],
     reproducibility: {
       deterministic: true,
-      runtimeEnvironment: "Node.js v20 / @cog/core 0.3.0",
+      runtimeEnvironment: "Node.js v20 / @winmedia/cog-core 0.3.0",
     },
   };
 
@@ -174,7 +174,7 @@ test("HDCP-COG-EVALUATION-CONTRACT-018: Evaluates generic CogLib, Music speciali
     qualificationsAndUncertainty: [],
     reproducibility: {
       deterministic: true,
-      runtimeEnvironment: "Node.js v20 / @cog/core 0.3.0",
+      runtimeEnvironment: "Node.js v20 / @winmedia/cog-core 0.3.0",
     },
   };
 

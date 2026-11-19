@@ -4,7 +4,7 @@ This directory contains canonical runnable examples for each implemented domain 
 
 ## Runnable Application Examples
 
-Each example demonstrates the consumption and declarative patterns of a specific domain library. They can be compiled, validated, planned, and executed using the `@cog/core` runtime.
+Each example demonstrates the consumption and declarative patterns of a specific domain library. They can be compiled, validated, planned, and executed using the `@winmedia/cog-core` runtime.
 
 1. **Research Synthesis** (`cog:domain:research`)
    - **File**: [`applications/canonical-research-synthesis.cog`](./applications/canonical-research-synthesis.cog)

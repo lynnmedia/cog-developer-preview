@@ -1,12 +1,12 @@
 {
-  "name": "@cog/core",
+  "name": "@winmedia/cog-core",
   "version": "0.3.0",
   "description": "Core cognition-kernel and pipeline runner for the Cog language",
   "author": "Lynn Media",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lynnmedia/cog.git",
+    "url": "git+https://github.com/lynnmedia/cog-developer-preview.git",
     "directory": "packages/cog-core"
   },
   "engines": {
@@ -16,6 +16,9 @@
   "type": "commonjs",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "cog": "dist/cli/bin.js"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -25,12 +28,16 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "examples",
+    "learning"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "clean": "rm -rf dist",
-    "test": "npm run build && tsx --test src/tests/*.test.ts"
+    "clean": "rm -rf dist learning",
+    "assemble:learning": "node ./scripts/assembleLearningPack.cjs",
+    "prepack": "npm run build && npm run assemble:learning",
+    "test": "npm run build && node --import tsx --test --test-concurrency=1 src/tests/*.test.ts"
   },
   "devDependencies": {
     "@types/node": "^20.19.25",
@@ -42,7 +49,7 @@
   },
   "keywords": [],
   "bugs": {
-    "url": "https://github.com/lynnmedia/cog/issues"
+    "url": "https://github.com/lynnmedia/cog-developer-preview/issues"
   },
-  "homepage": "https://github.com/lynnmedia/cog#readme"
+  "homepage": "https://github.com/lynnmedia/cog-developer-preview#readme"
 }

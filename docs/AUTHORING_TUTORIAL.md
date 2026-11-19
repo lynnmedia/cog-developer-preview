@@ -1,191 +1,34 @@
-# Progressive Cog Authoring Tutorial
+# Progressive Cog Authoring Tutorial — Superseded
 
-This tutorial guides you through the process of authoring a multi-stage cognition workflow in Cog. You will learn how to use the core statement types (`define`, `relate`, `view`, `resolve`, `transform`, `emit`, and `constrain`) to build a robust model with cumulative verification state.
+**Status:** Superseded for the Developer Preview.
 
----
+This historical path is retained to avoid breaking existing links.
 
-## Tutorial Scenario: Credit Card Application Assessment
+The current learning sequence is:
 
-We will model a financial application workflow that intakes a **Credit Application**, verifies the applicant's **Credit Score**, references their **Income Verification**, performs a **Risk Check**, and emits an **Approval Decision**.
+1. [`START_HERE.md`](START_HERE.md) — install Cog and run the first canonical program.
+2. [`LEVEL_1_LANGUAGE_AND_COGNITIVE_PATTERNS.md`](LEVEL_1_LANGUAGE_AND_COGNITIVE_PATTERNS.md) — learn the seven statement families through the ten canonical primitive patterns.
+3. [`GOVERNED_DECISION_TUTORIAL.md`](GOVERNED_DECISION_TUTORIAL.md) — compose the full language surface in one governed deployment decision.
 
----
+The replacement progressive tutorial develops one governed deployment decision across:
 
-## Step 1: Defining Entities (`define`)
+1. `define entity`
+2. `relate`
+3. `view`
+4. `resolve`
+5. `transform`
+6. `constrain`
+7. `emit`
+8. validation
+9. execution and trace interpretation
+10. the boundary between kernel-governed representation and higher-layer cognitive algorithms
 
-All workflows begin by declaring the structural entities involved. We define our input records and the intermediate structures:
+For reference use:
 
-```cog
-# Stage 1: Incoming Application Data
-define entity "credit-application" {
-  kind: "record"
-  level: L1
-}
+- `docs/LANGUAGE_SPEC_v0.4.md` for canonical syntax;
+- `docs/LANGUAGE_SEMANTIC_MODEL.md` for execution semantics;
+- `packages/cog-core/examples/primitives/` for small executable patterns;
+- `packages/cog-core/examples/tutorials/governed-decision.cog` for the executable tutorial fixture;
+- `packages/cog-core/examples/applications/` for real application examples.
 
-# Stage 2: Applicant Credit Profile
-define entity "credit-score" {
-  kind: "verification"
-  level: L1
-}
-
-# Stage 3: Income Verification
-define entity "income-verification" {
-  kind: "verification"
-  level: L2
-}
-```
-
----
-
-## Step 2: Relating Entities (`relate`)
-
-Relationships establish dependency and reference links between entities:
-
-```cog
-# Link the application to the applicant's credit score
-relate "credit-application" -> "credit-score" {
-  kind: "references_credit"
-}
-
-# Link the application to the income verification
-relate "credit-application" -> "income-verification" {
-  kind: "references_income"
-}
-```
-
----
-
-## Step 3: Resolving External References (`resolve`)
-
-When execution transitions from raw inputs to verified structures, we resolve entities to specific verification levels (L1 to L5):
-
-```cog
-# Resolve the application inputs to L1 verification level
-resolve "credit-application" to L1 {
-  // Empty resolve block indicates basic check
-}
-
-# Resolve the credit score to L2 verification level
-resolve "credit-score" to L2 {
-  // Empty resolve block
-}
-```
-
----
-
-## Step 4: Emitting Outputs (`emit`)
-
-At intermediate stages, we emit events or summaries targeting specific resolved entities to notify external systems:
-
-```cog
-# Emit an event showing the pre-screening is complete
-emit {
-  target: "credit-application"
-  kind: "pre_screening_completed"
-}
-```
-
----
-
-## Step 5: Transforming Entities (`transform`)
-
-We transform entities to compute new attributes or progress them through states. In this step, we project the credit score and income verification into a consolidated **Risk Check**:
-
-```cog
-# Consolidate verification details into a single risk check entity
-define entity "risk-assessment" {
-  kind: "risk_check"
-  level: L3
-}
-
-transform "risk-assessment" {
-  source: "credit-score"
-  action: "evaluate_risk"
-}
-```
-
----
-
-## Step 6: Constraining State (`constrain`)
-
-Constraints enforce invariant logical check rules on entities. We want to ensure that no high-risk applications can proceed:
-
-```cog
-# Constrain the risk check to enforce approval safety
-constrain "risk-assessment" {
-  rule: "risk_score_less_than_threshold"
-  limit: 50
-}
-```
-
----
-
-## Step 7: Emitting the Final Decision (`emit`)
-
-Finally, we emit the outcome of the multi-stage assessment:
-
-```cog
-# Emit the final credit approval event
-emit {
-  target: "risk-assessment"
-  kind: "credit_application_approved"
-}
-```
-
----
-
-## Step 8: Complete Program Listing
-
-Here is the final consolidated program:
-
-```cog
-define entity "credit-application" {
-  kind: "record"
-  level: L1
-}
-
-define entity "credit-score" {
-  kind: "verification"
-  level: L1
-}
-
-define entity "income-verification" {
-  kind: "verification"
-  level: L2
-}
-
-relate "credit-application" -> "credit-score" {
-  kind: "references_credit"
-}
-
-relate "credit-application" -> "income-verification" {
-  kind: "references_income"
-}
-
-resolve "credit-application" to L1 {}
-resolve "credit-score" to L2 {}
-
-emit {
-  target: "credit-application"
-  kind: "pre_screening_completed"
-}
-
-define entity "risk-assessment" {
-  kind: "risk_check"
-  level: L3
-}
-
-transform "risk-assessment" {
-  source: "credit-score"
-  action: "evaluate_risk"
-}
-
-constrain "risk-assessment" {
-  rule: "risk_score_less_than_threshold"
-  limit: 50
-}
-
-emit {
-  target: "risk-assessment"
-  kind: "credit_application_approved"
-}
-```
+No new Developer Preview material should copy syntax or semantic claims from the historical version of this file.

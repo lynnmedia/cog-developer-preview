@@ -4,10 +4,10 @@
 document_version: 0.1.0
 status: RATIFIED
 governing_hdcp: COG-PUBLIC-BOUNDARY-003
-canonical_distributable_package: @cog/core
+canonical_distributable_package: @winmedia/cog-core
 optional_distributable_packages:
-  - @cog/adapter-mom
-  - @cog/adapter-decision
+  - @winmedia/cog-adapter-mom
+  - @winmedia/cog-adapter-decision
 tooling_packages:
   - cog-vscode-extension
 root_package_status: PRIVATE_WORKSPACE_COORDINATOR
@@ -19,7 +19,7 @@ This manifest establishes the canonical public distribution boundary for the **C
 
 The boundary adheres strictly to the following principles:
 1. **Kernel Ontology Agnosticism**: Core language compilation and deterministic runtime execution must remain free of proprietary application ontologies.
-2. **Canonical Package Identity**: `@cog/core` is the primary distributable package. The root `cog` package remains a private workspace coordinator.
+2. **Canonical Package Identity**: `@winmedia/cog-core` is the primary distributable package. The root `cog` package remains a private workspace coordinator.
 3. **Explicit Layer Partitioning**: Every surface is assigned an exact architectural classification with declared Preview 1 inclusion and support tier.
 4. **Zero Silent Domain Infiltration**: Proprietary integration bridges (e.g. `integration/*`) are excluded from the public API boundary.
 
@@ -32,7 +32,7 @@ The boundary adheres strictly to the following principles:
 | `CORE` | Fundamental language grammar, lexer, parser, AST, IR, compiler, planner, validator, runtime execution engine, and context/execution types. |
 | `STDLIB` | Generic cognitive primitive operations, standard routines (`shape`, `compare`, `trace`, `challenge`), proof harnesses, instruments, and fluent builders. |
 | `DEV_TOOL` | Language server (LSP), CLI, linters, static analyzers, metrics calculators, visualizers, documentation generators, trace diffing, and test assertions. |
-| `OPTIONAL_PUBLIC` | Standalone companion adapter packages demonstrating domain protocol integration (`@cog/adapter-mom`, `@cog/adapter-decision`). |
+| `OPTIONAL_PUBLIC` | Standalone companion adapter packages demonstrating domain protocol integration (`@winmedia/cog-adapter-mom`, `@winmedia/cog-adapter-decision`). |
 | `DOMAIN_LIBRARY` | Reference domain libraries illustrating typed domain transformations (research, editorial, decision, audit, graph, orientation, governance, etc.). |
 | `INTERNAL` | Implementation details, private helpers, or internal monorepo fixtures not exposed for external consumption. |
 | `EXCLUDE_FROM_PREVIEW` | Legacy monolithic artifacts, proprietary integration bridges, or unproven surfaces excluded from public API re-exports. |
@@ -167,7 +167,7 @@ The boundary adheres strictly to the following principles:
 
 | Surface / Path | Preview 1 Inclusion | Classification | Rationale |
 |---|---|---|---|
-| `packages/cog-core/src/integration/**` | **NO** | `EXCLUDE_FROM_PREVIEW` | Proprietary WinMedia / MandalaStacks bridge code (`bookFactory`, `mandalaStacks`, `auditWorkbench`, etc.). Must be un-exported from `@cog/core` index in `COG-PUBLIC-API-SANITATION-004`. |
+| `packages/cog-core/src/integration/**` | **NO** | `EXCLUDE_FROM_PREVIEW` | Proprietary WinMedia / MandalaStacks bridge code (`bookFactory`, `mandalaStacks`, `auditWorkbench`, etc.). Must be un-exported from `@winmedia/cog-core` index in `COG-PUBLIC-API-SANITATION-004`. |
 | Root `src/**` (legacy) | **NO** | `INTERNAL` | Pre-v0.3 legacy monolithic prototype code. Retained internally only for backward test comparison; not part of public distribution. |
 | Root `package.json` | **NO** | `INTERNAL` | Marked `"private": true`. Acts purely as monorepo coordinator; distribution is via individual packages. |
 
@@ -177,7 +177,7 @@ The boundary adheres strictly to the following principles:
 
 1. **Root vs. Workspace Identity**:
    - The root package remains strictly private.
-   - `@cog/core` is the singular, authoritative package published to registries for public consumption.
+   - `@winmedia/cog-core` is the singular, authoritative package published to registries for public consumption.
 
 2. **Core vs. Standard Library Boundary**:
    - `CORE` is purely syntactic, structural, and execution-oriented (lexer, parser, compiler, planner, validator, runtime).
@@ -185,13 +185,13 @@ The boundary adheres strictly to the following principles:
 
 3. **Domain Library Policy**:
    - The domain contract and registry are core features.
-   - Reference domain libraries are distributed with `@cog/core` to provide immediately useful, proven cognitive patterns across 12 distinct knowledge areas.
+   - Reference domain libraries are distributed with `@winmedia/cog-core` to provide immediately useful, proven cognitive patterns across 12 distinct knowledge areas.
 
 4. **Integration Surface Quarantine**:
-   - Proprietary integration modules (`integration/*`) are officially marked for removal from the `@cog/core` public barrel export. They will not be accessible to standard public consumers.
+   - Proprietary integration modules (`integration/*`) are officially marked for removal from the `@winmedia/cog-core` public barrel export. They will not be accessible to standard public consumers.
 
 5. **Companion Adapters**:
-   - `@cog/adapter-mom` and `@cog/adapter-decision` remain first-class optional public packages providing documented examples of the CogDomainAdapter extension protocol.
+   - `@winmedia/cog-adapter-mom` and `@winmedia/cog-adapter-decision` remain first-class optional public packages providing documented examples of the CogDomainAdapter extension protocol.
 
 ---
 

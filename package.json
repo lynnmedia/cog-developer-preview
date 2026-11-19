@@ -1,6 +1,17 @@
 {
   "name": "cog",
   "version": "0.1.6",
+  "description": "Deterministic cognition-kernel and execution pipeline for the .cog language",
+  "author": "Lynn Media",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lynnmedia/cog-developer-preview.git"
+  },
+  "homepage": "https://github.com/lynnmedia/cog-developer-preview#readme",
+  "bugs": {
+    "url": "https://github.com/lynnmedia/cog-developer-preview/issues"
+  },
   "private": true,
   "type": "commonjs",
   "workspaces": [
@@ -15,10 +26,11 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "build:v0.3": "npm run build -w @cog/core && npm run build -w @cog/adapter-mom && npm run build -w @cog/adapter-decision && npm run build -w cog-vscode-extension",
-    "validate:release": "tsx scripts/validate-release.ts",
-    "test": "tsx --test src/core.test.ts",
-    "test:v0.3": "npm run test -w @cog/core",
+    "build:v0.3": "npm run build -w @winmedia/cog-core && npm run build -w @winmedia/cog-adapter-mom && npm run build -w @winmedia/cog-adapter-decision && npm run build -w cog-vscode-extension",
+    "validate:release": "node --import tsx scripts/validate-release.ts",
+    "test:clean-clone": "node --import tsx scripts/verify-clean-clone.ts",
+    "test": "node --import tsx --test src/core.test.ts",
+    "test:v0.3": "npm run test -w @winmedia/cog-core",
     "clean": "rm -rf dist *.tgz cog-local.tgz",
     "verify:dist": "test -f dist/index.js || (echo 'Missing build output' && exit 1)",
     "prepack": "npm run clean && npm run build && npm run verify:dist && npm test",

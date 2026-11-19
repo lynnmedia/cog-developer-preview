@@ -1,4 +1,4 @@
-import type { CogDomainAdapter, CoreIR } from "@cog/core";
+import type { CogDomainAdapter, CoreIR } from "@winmedia/cog-core";
 
 export interface AwbNormalizedAuditOperation {
   operation_id: string;

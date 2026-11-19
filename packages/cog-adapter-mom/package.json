@@ -1,12 +1,12 @@
 {
-  "name": "@cog/adapter-mom",
+  "name": "@winmedia/cog-adapter-mom",
   "version": "0.3.0",
   "description": "Model-of-Models (MoM) workflow adapter for the Cog language",
   "author": "Lynn Media",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lynnmedia/cog.git",
+    "url": "git+https://github.com/lynnmedia/cog-developer-preview.git",
     "directory": "packages/cog-adapter-mom"
   },
   "engines": {
@@ -31,7 +31,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@cog/core": "^0.3.0"
+    "@winmedia/cog-core": "^0.3.0"
   },
   "devDependencies": {
     "typescript": "^5.9.2"

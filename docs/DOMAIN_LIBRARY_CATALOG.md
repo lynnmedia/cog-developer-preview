@@ -109,7 +109,7 @@ This catalog documents the available cognitive domain libraries, pipelines, proo
 
 ## 3. Downstream Consumption
 
-All domain libraries, pipelines, proofs, and the registry are exported directly from the `@cog/core` package:
+All domain libraries, pipelines, proofs, and the registry are exported directly from the `@winmedia/cog-core` package:
 
 ```typescript
 import {
@@ -129,6 +129,6 @@ import {
   composeResearchToEditorial,
   composeAuditToDecision,
   composeGraphToResearch
-} from "@cog/core";
+} from "@winmedia/cog-core";
 
 ```

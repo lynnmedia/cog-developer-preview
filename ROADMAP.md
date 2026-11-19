@@ -6,7 +6,7 @@ This document outlines the architectural milestones and future directions for th
 
 ## 1. Milestone 1: Developer Preview (v0.1.0 / v0.3-Contract) — Current
 
-- **Ontology-Agnostic Core**: Restrained AST, deterministic IR compiler, bounded execution planner, semantic validator, and execution engine (`@cog/core`).
+- **Ontology-Agnostic Core**: Restrained AST, deterministic IR compiler, bounded execution planner, semantic validator, and execution engine (`@winmedia/cog-core`).
 - **Standard Cognition Library (`STDLIB`)**:
   - Universal primitives (`observe`, `identify`, `compare`, `classify`, `relate`, `group`, `project`, `resolve`, `evaluate`, `explain`, `compose`).
   - Standard CogLib routines (`shape`, `compare`, `trace`, `challenge`).
@@ -19,8 +19,8 @@ This document outlines the architectural milestones and future directions for th
 - **Reference Domain Libraries (`DOMAIN_LIBRARY`)**:
   - 12 reference domain libraries (Research, Editorial, Decision, Audit, Graph, Orientation, Governance, etc.).
 - **Companion Adapters (`OPTIONAL_PUBLIC`)**:
-  - `@cog/adapter-mom`: Mind-over-Matter (`mom:`) level and relation mapping.
-  - `@cog/adapter-decision`: Decision domain workflow adapter.
+  - `@winmedia/cog-adapter-mom`: Mind-over-Matter (`mom:`) level and relation mapping.
+  - `@winmedia/cog-adapter-decision`: Decision domain workflow adapter.
 
 ---
 

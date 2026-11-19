@@ -1,64 +1,178 @@
 # Cog Language Semantic Model
 
-This document defines the formal semantic model of the Cog language. A `.cog` program does not specify an operational sequence of actions; instead, it defines a **declarative semantic graph** and the execution constraints, views, and transformations that operate upon it.
+This document defines the Developer Preview semantic model of Cog. A `.cog` program does not primarily describe an imperative algorithm; it declares a **governed semantic graph** together with perspectives, resolution declarations, transformation intent, constraints, emissions, and the execution structure used to inspect and trace that declaration.
 
-## 1. The Semantic Graph Model
+## 1. Semantic Graph
 
-The evaluation of a `.cog` program yields a directed semantic graph $G = (V, E)$ where:
-- **Vertices ($V$)**: Represent **Entities**. Each entity has a unique identifier, an entity kind (ontology type), an optional level, and a set of key-value attributes.
-- **Edges ($E$)**: Represent **Relations**. Each edge is directed from a source entity to a target entity, has a relation kind, and carries optional attributes.
+Compilation represents a Cog program as a directed semantic graph whose principal cognitive objects are:
 
-Entities and relations represent the baseline state of knowledge before transformations or resolutions are applied.
+- **Entities** — named semantic objects with kinds, optional levels, and attributes.
+- **Relations** — directed typed links between entities.
+- **Views** — declared perspectives over entities.
+- **Resolutions** — explicit bindings of targets to Cog levels (`L1`–`L5`).
+- **Transformations** — explicit references to governed transformation intent.
+- **Constraints** — explicit constraint declarations attached to targets.
+- **Emissions** — explicit output projections.
 
-## 2. Compilation and Intermediate Representation (`CoreIR`)
+The kernel preserves these distinctions rather than collapsing them into an opaque reasoning result.
 
-A `.cog` program undergoes compilation from an Abstract Syntax Tree (AST) to a structured Intermediate Representation (`CoreIR`).
+## 2. CoreIR
 
-The `CoreIR` represents the complete blueprint for a cognition step, containing:
-1. **Entities and Relations**: The static vertices and edges of the graph.
-2. **Views**: Contextual slices defined on entities.
-3. **Resolutions**: Instructions for binding entities to levels or values.
-4. **Transformations**: Declared source-to-target entity mappings.
-5. **Constraints**: Invariant rules asserted over the final graph.
-6. **Emissions**: Intentions to output specific entity states.
+Source passes through lexer and parser stages before compilation into `CoreIR`. `CoreIR` is the inspectable intermediate representation consumed by validation, planning, execution, adapters, tools, and traces.
 
-## 3. Execution Semantics
+It contains entity, relation, view, resolution, transformation, constraint, emission, and graph structures plus compiler metadata.
 
-The execution of a compiled `CoreIR` follows a strict, non-looping, feed-forward pipeline:
+CoreIR records **declared cognitive structure**. It must not be described as evidence that the kernel independently inferred every declared relation, classification, comparison, transformation, or decision.
 
+## 3. Canonical Consumer Pipeline
+
+The Developer Preview consumer sequence is:
+
+```text
+LEX → PARSE → COMPILE → VALIDATE → PLAN → EXECUTE → EMISSIONS + TRACE
 ```
-[CoreIR] ➔ [Plan] ➔ [Validation] ➔ [Execution] ➔ [Trace & Emissions]
+
+`executeCog()` performs validation and planning internally as well, so direct callers may use it after compilation when they do not require separate inspection of the validation report or plan.
+
+### Validation
+
+Core validation currently enforces structural properties such as:
+
+- valid entity references;
+- relation source and target existence;
+- view target existence;
+- valid resolution levels;
+- transform and constraint target existence;
+- core reference syntax;
+- active adapter validation when an adapter provides `validateProgram()`.
+
+An arbitrary `rule:` string in a `.cog` constraint is **not automatically a general-purpose executable predicate**. Domain-specific or cognitive rule evaluation belongs in the appropriate CogLib routine, domain library, adapter, tool, or application layer.
+
+### Planning
+
+The planner converts CoreIR into a deterministic execution plan. Kernel plan phases are:
+
+1. `bind`
+2. `transform`
+3. `validate`
+4. `emit`
+
+Dependencies between plan steps are explicit and inspectable.
+
+### Execution
+
+Execution walks the plan, maintains bindings, applies supported adapter hooks, creates emissions, and records a trace.
+
+The kernel `transform` phase preserves and executes the declared transformation plan step, including its transformation reference. The `transform` keyword does not by itself imply a universal algorithm capable of deriving arbitrary semantic transformations. Concrete transformation logic must come from the layer that owns that capability.
+
+## 4. Relations
+
+A `relate` statement declares that two entities participate in a directed typed relationship.
+
+For example:
+
+```cog
+relate "current-state" -> "baseline-state" {
+  kind: differs-from
+}
 ```
 
-### A. Planning Phase (`planCog`)
-The planner analyzes the dependencies in the `CoreIR` and produces a sequence of execution steps. Each step belongs to one of the following phases:
-1. **`bind`**: Binds references and computes initial states.
-2. **`transform`**: Executes declared mappings to derive new entities or attributes.
-3. **`validate`**: Enforces that all structural constraints and adapter rules are satisfied.
-4. **`emit`**: Projects finalized results to the domain adapter.
+This declaration says that the relation is part of the governed semantic representation. Whether `differs-from` was observed, computed, supplied by a CogLib routine, generated by a domain library, or produced by an external tool is a separate provenance question.
 
-### B. Validation Phase (`validateCog`)
-Validation is a first-class phase that runs both before planning (to ensure the IR is structurally sound) and during execution (to enforce constraints).
-- **Structural Validation**: Checks that all referenced relation sources, targets, views, and transformations exist.
-- **Constraint Validation**: Evaluates user-defined rules. If a constraint is violated, validation fails, halting execution.
+Adapters may map neutral relation kinds using `mapRelationKind()`, but the kernel remains ontology-agnostic.
 
-### C. Execution Phase (`executeCog`)
-Execution processes the plan steps in-memory:
-- It maintains a runtime context and memory map.
-- It applies adapter hooks (e.g. `mapLevel`, `mapViewKind`, `mapEmission`) to enrich the output.
-- It returns an execution result containing a success flag, list of issues, emissions, and a complete trace.
+## 5. Perspectives
 
-## 4. Relations and Perspectives
+A `view` declaration associates a target with an explicit perspective identifier:
 
-- **Relation Semantics**: Relations assert that two entities are linked. The domain adapter interprets what this link means (e.g., in a MoM context, a relation might mean a security dependency; in a Decision context, a dependency constraint).
-- **Perspective Semantics**: A `view` statement describes how an entity appears under a specific perspective (`as <perspective_id>`). At runtime, the active adapter maps the view's perspective identifier to a domain-specific view kind (via `mapViewKind`), altering how attributes are evaluated.
+```cog
+view "proposal" as operational {
+}
+```
 
-## 5. Transformations and Resolutions
+The neutral view remains represented in CoreIR. An adapter may project that view to domain-specific terminology through `mapViewKind()`. The presence of a view does not imply that the kernel automatically performs arbitrary perspective-specific reasoning over entity attributes.
 
-- **Transform Semantics**: Transformations define explicit mappings between entity structures. They translate or enrich data across schemas. All transformation mappings must be statically checkable.
-- **Resolve Semantics**: Resolutions bind entity levels or properties. Levels (e.g. `L1`, `L2`) represent abstract degrees of importance, criticality, or depth. The adapter maps these to domain-specific levels (via `mapLevel`).
+## 6. Resolutions
 
-## 6. Constraints and Emissions
+A resolution explicitly associates an entity with one of the neutral Cog levels:
 
-- **Constraint Semantics**: A constraint asserts an invariant over the state of the graph. If the constraint expression evaluates to false, the program is invalid.
-- **Emission Semantics**: Emissions represent the final outputs of a cognition step. When an entity is emitted, its state is projected through the active adapter's `mapEmission` hook, producing a domain-specific payload.
+```cog
+resolve "proposal" to L3 {
+}
+```
+
+Levels are intentionally domain-neutral in core. An adapter may map them into a domain-specific level system through `mapLevel()`.
+
+A resolution is therefore an explicit governed declaration, not evidence that core independently established the truth or authority of the resolved value.
+
+## 7. Transformations
+
+Transformations preserve explicit transformation intent:
+
+```cog
+transform {
+  target: "proposal"
+  to: assessed
+}
+```
+
+Core records the target and transformation reference and includes the step in planning and trace output. Domain-neutral or domain-specific transformation algorithms may be implemented above the kernel.
+
+This separation is deliberate: Cog makes transformations inspectable instead of allowing an implementation to silently change semantic state.
+
+## 8. Constraints
+
+Constraints attach governance declarations to explicit targets:
+
+```cog
+constrain {
+  target: "proposal"
+  rule: "requires-evidence"
+}
+```
+
+Core validates structural integrity. A domain layer may additionally interpret and enforce the declared rule through adapter validation or other governed execution mechanisms.
+
+## 9. Emissions
+
+Emissions are explicit output projections:
+
+```cog
+emit {
+  target: "proposal"
+  kind: assessment
+}
+```
+
+During execution, the runtime creates an emission payload containing target information and relevant mapped level, view, relation, and attribute data. An adapter may replace or specialize the outbound emission through `mapEmission()`.
+
+Developer Preview examples always specify `target:` explicitly.
+
+## 10. Execution Trace
+
+Every `executeCog()` result includes a trace containing ordered step outcomes and phase information. Traces are first-class evidence about **what Cog executed**, not a reconstruction performed after the fact.
+
+The trace therefore supports inspection of:
+
+- binding;
+- declared transformations;
+- validation phase execution;
+- emissions;
+- adapter-specific trace additions when provided.
+
+## 11. Architectural Boundary
+
+Cog core owns:
+
+- syntax and parsing;
+- CoreIR;
+- structural validation;
+- deterministic planning;
+- runtime execution structure;
+- emissions;
+- traces;
+- adapter contracts.
+
+CogLib, domain libraries, adapters, tools, and applications may supply higher-order cognition and domain semantics.
+
+This boundary is central to the Developer Preview: **Cog makes cognition explicit and governable; it does not claim that every cognitive operation named in a graph is automatically inferred by the kernel itself.**

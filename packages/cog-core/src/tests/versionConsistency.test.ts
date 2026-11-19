@@ -17,8 +17,8 @@ test("Package, compiler, and IR versions are consistent", () => {
   const decisionVersion = decisionJson.version;
 
   // 1. Enforce workspaces have matching versions
-  assert.equal(momVersion, coreVersion, `@cog/adapter-mom version (${momVersion}) must match @cog/core version (${coreVersion})`);
-  assert.equal(decisionVersion, coreVersion, `@cog/adapter-decision version (${decisionVersion}) must match @cog/core version (${coreVersion})`);
+  assert.equal(momVersion, coreVersion, `@winmedia/cog-adapter-mom version (${momVersion}) must match @winmedia/cog-core version (${coreVersion})`);
+  assert.equal(decisionVersion, coreVersion, `@winmedia/cog-adapter-decision version (${decisionVersion}) must match @winmedia/cog-core version (${coreVersion})`);
 
   // 2. Enforce compileCog output metadata.compilerVersion matches the package version
   const emptyProgram: ProgramNode = {
@@ -28,5 +28,5 @@ test("Package, compiler, and IR versions are consistent", () => {
   const ir = compileCog(emptyProgram);
   const compilerVersion = ir.meta.compilerVersion;
 
-  assert.equal(compilerVersion, coreVersion, `Compiler output version (${compilerVersion}) must match @cog/core package version (${coreVersion})`);
+  assert.equal(compilerVersion, coreVersion, `Compiler output version (${compilerVersion}) must match @winmedia/cog-core package version (${coreVersion})`);
 });
